@@ -1,0 +1,20 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.5/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.5/ http://www.mediawiki.org/xml/export-0.5.xsd" version="0.5" xml:lang="en">
+  <page>
+    <title>Algeria/People</title>
+    <id>347</id>
+    <redirect />
+    <revision>
+      <id>179567227</id>
+      <timestamp>2007-12-22T10:56:42Z</timestamp>
+      <contributor>
+        <username>Closedmouth</username>
+        <id>372693</id>
+      </contributor>
+      <minor />
+      <comment>Added {{R from CamelCase}} tag to redirect. using [[WP:FRIENDLY|Friendly]]</comment>
+      <text xml:space="preserve">#REDIRECT [[Demographics of Algeria]]
+
+{{R from CamelCase}}</text>
+    </revision>
+  </page>
+</mediawiki>
