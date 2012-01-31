@@ -24,16 +24,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
 
+
 public class WikiIndexer{
 
 	private IndexWriter writer;
-	String index_dir;
+	String index_dir="Folder_Index" , doc_dir;
 	public WikiUtils utils_Obj;
 	private XMLFileManager xml_files;
+	private XMLJDomParser xml_parser;
+	final int NUM_OF_PAGES = 10;
+	public Page page;
 
-	private void initializeIndexWriter(String path) throws IOException {
+	private void initializeIndexWriter() throws IOException {
 		Directory dir ;
-		dir = FSDirectory.open(new File(path) );
+		dir = FSDirectory.open(new File(getIndexDirectory()) );
 	    Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
 	    IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_31, analyzer);
 		writer = new IndexWriter( dir, iwc);
@@ -47,6 +51,14 @@ public class WikiIndexer{
 		return this.index_dir;
 	}
 
+	public void setDocumentDirectory(String path){
+		this.doc_dir = path;
+	}
+
+	public String getDocumentDirectory(){
+		return this.doc_dir;
+	}
+
 	WikiIndexer(String path) throws IOException{
 		//Intitialize all the objects
 
@@ -57,18 +69,34 @@ public class WikiIndexer{
 			System.out.println("Invalid folder . Exiting");
 			System.exit(1);
 		}
-		setIndexDirectory(path);
+		setDocumentDirectory(path);
 
 		//Initializing XMLFileManager 
 		//xml_files = new XMLFileManager( path );
 		xml_files = new XMLFileManager();
 		
 		//Initializing Index Writer.
-	 	initializeIndexWriter(path);
+	 	initializeIndexWriter();
+
+		page = new Page();
+		xml_parser= new XMLJDomParser() ;
 	}
 
-	public int indexFiles(){
-		return 1;
+	public int indexFiles() throws Exception{
+		
+		for(int i=0;i<NUM_OF_PAGES ;i++){
+			page = xml_parser.getPageObj(page);
+			Document indexDoc = new Document();
+			Field field1 = new Field("contents", page.getContent() + i, Field.Store.YES, Field.Index.ANALYZED);
+			indexDoc.add(field1);
+
+			Field field2 = new Field("title" , page.getTitle()  + i,Field.Store.YES, Field.Index.ANALYZED);
+			indexDoc.add(field2);
+
+			writer.addDocument(indexDoc);
+		}
+
+		return writer.numDocs();
 	}
 
 	public static void main(String args[]) throws Exception{
