@@ -79,21 +79,53 @@ public class WikiIndexer{
 	 	initializeIndexWriter();
 
 		page = new Page();
-		xml_parser= new XMLJDomParser() ;
+        page.setFlag(1);
+
+		String file_name = "data/enwiki-20120104-pages-meta-current1.xml-p000000010p000010000";
+		xml_parser= new XMLJDomParser(file_name) ;
+	
 	}
 
 	public int indexFiles() throws Exception{
 		
-		for(int i=0;i<NUM_OF_PAGES ;i++){
-			page = xml_parser.getPageObj(page);
+       
+/*
+        while(newPage.getFlag()==1)
+        {
+            //System.out.println(newPage.getTitle());
+            System.out.println(newPage.getContent());
+           
+            try {
+                newPage=xml_parser.getPageData();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+		}
+*/
+            
+		//for(int i=0; page.getFlag() == 1 ;i++){
+        while(page.getFlag()==1){
+			//page = xml_parser.getPageObj(page);
+            page=xml_parser.getPageData();
+
+			if( page.getFlag() == 0)
+				break;
+			
 			Document indexDoc = new Document();
-			Field field1 = new Field("contents", page.getContent() + i, Field.Store.YES, Field.Index.ANALYZED);
+			//System.out.println( page.getContent().toString());
+			Field field1 = new Field("contents", page.getContent().toString() , Field.Store.YES, Field.Index.ANALYZED);
 			indexDoc.add(field1);
 
-			Field field2 = new Field("title" , page.getTitle()  + i,Field.Store.YES, Field.Index.ANALYZED);
+			Field field2 = new Field("title" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.ANALYZED);
 			indexDoc.add(field2);
 
 			writer.addDocument(indexDoc);
+		//}
 		}
 
 		return writer.numDocs();
@@ -112,6 +144,7 @@ public class WikiIndexer{
       			System.exit(1);
 			}
 		}
+    Date start = new Date();
 
 		String index_path = args[1];
 		WikiIndexer indexer_obj = new WikiIndexer(index_path);
@@ -119,6 +152,8 @@ public class WikiIndexer{
 		int numOfDocs = indexer_obj.indexFiles();
 		System.out.println("Number of files indexed : " +numOfDocs);
 		indexer_obj.close();
+      Date end = new Date();
+      System.out.println(end.getTime() - start.getTime() + " total milliseconds");
 
 	}
 

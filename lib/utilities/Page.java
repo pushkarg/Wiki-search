@@ -1,4 +1,4 @@
-package parser;
+package utilities;
 
 public class Page {
 	
