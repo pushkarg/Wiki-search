@@ -1,23 +1,29 @@
-package utilities;
+package parser;
 
 public class Page {
-   
-    StringBuffer  title;
-    StringBuffer content;
-    int flag;
-   
-    public void setTitle(StringBuffer title) {
-        this.title = title;
-    }
-    public void setContent(StringBuffer content) {
-        this.content = content;
-    }
-
-	public String getTitle(){
-		return new String("Pushkar d .. title ");
+	
+	StringBuffer  title;
+	StringBuffer content;
+	int flag;
+	
+	public StringBuffer getTitle() {
+		return title;
 	}
-
-    public String getContent() {
-        return new String("Pushkar D Testing . Sample string abcd");
-    }
+	public int getFlag() {
+		return flag;
+	}
+	public void setFlag(int flag) {
+		this.flag = flag;
+	}
+	public void setTitle(StringBuffer title) {
+		this.title = title;
+	}
+	public StringBuffer getContent() {
+		return content;
+	}
+	public void setContent(StringBuffer content) {
+		this.content = content;
+	}
 }
+
+
