@@ -23,7 +23,7 @@ public class XMLJDomParser {
 		Vector <StringBuffer> text;
 		int tot_page_count, curr_page_count;
 		
-	
+		
 		
 		
         public XMLJDomParser(String src_file) {
@@ -32,6 +32,8 @@ public class XMLJDomParser {
         //    String filePath = "xmls/Anthropology.xml";
             file_path = src_file; 
             File source_xml = new File(file_path);
+            
+            System.out.println("The file: \""+src_file+"\" is getting parsed...\n");
             
             try {
 				document = (Document) builder.build(source_xml);
@@ -45,7 +47,7 @@ public class XMLJDomParser {
             Element root = document.getRootElement();
             
             List totalRow = root.getChildren("page" , root.getNamespace() );
-            System.out.println("total row : "+ totalRow.size() );
+            System.out.println("total articles : "+ totalRow.size() );
             
             tot_page_count=totalRow.size();
             curr_page_count=tot_page_count;
@@ -87,7 +89,7 @@ public class XMLJDomParser {
 				}
 				else 
 				{	
-					System.out.println("The file is empty. \n");
+					//System.out.println("The file is empty. \n");
 					
 				}
 					
