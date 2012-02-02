@@ -81,7 +81,8 @@ public class WikiIndexer{
 		page = new Page();
         page.setFlag(1);
 
-		String file_name = "data/enwiki-20120104-pages-meta-current1.xml-p000000010p000010000";
+        String file_name = path;
+		//String file_name = "data/enwiki-20120104-pages-meta-current1.xml-p000000010p000010000";
 		xml_parser= new XMLJDomParser(file_name) ;
 	
 	}
@@ -146,11 +147,11 @@ public class WikiIndexer{
 		}
     Date start = new Date();
 
-		String index_path = args[1];
-		WikiIndexer indexer_obj = new WikiIndexer(index_path);
+		String path = args[1];
+		WikiIndexer indexer_obj = new WikiIndexer(path);
 
 		int numOfDocs = indexer_obj.indexFiles();
-		System.out.println("Number of files indexed : " +numOfDocs);
+		System.out.println("Number of articles indexed : " +numOfDocs);
 		indexer_obj.close();
       Date end = new Date();
       System.out.println(end.getTime() - start.getTime() + " total milliseconds");
