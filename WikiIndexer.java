@@ -72,7 +72,6 @@ public class WikiIndexer{
 		setDocumentDirectory(path);
 
 		//Initializing XMLFileManager 
-		//xml_files = new XMLFileManager( path );
 		xml_files = new XMLFileManager();
 		
 		//Initializing Index Writer.
@@ -81,52 +80,32 @@ public class WikiIndexer{
 		page = new Page();
         page.setFlag(1);
 
-        String file_name = path;
-		//String file_name = "data/enwiki-20120104-pages-meta-current1.xml-p000000010p000010000";
+       	String file_name = path;
 		xml_parser= new XMLJDomParser(file_name) ;
 	
 	}
 
 	public int indexFiles() throws Exception{
-		
-       
-/*
-        while(newPage.getFlag()==1)
-        {
-            //System.out.println(newPage.getTitle());
-            System.out.println(newPage.getContent());
-           
-            try {
-                newPage=xml_parser.getPageData();
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-		}
-*/
-            
-		//for(int i=0; page.getFlag() == 1 ;i++){
-        while(page.getFlag()==1){
-			//page = xml_parser.getPageObj(page);
-            page=xml_parser.getPageData();
-
+        	
+		while(page.getFlag()==1){
+           	page=xml_parser.getPageData(page);
 			if( page.getFlag() == 0)
 				break;
 			
 			Document indexDoc = new Document();
-			//System.out.println( page.getContent().toString());
-			Field field1 = new Field("contents", page.getContent().toString() , Field.Store.YES, Field.Index.ANALYZED);
+			Field field1 = new Field("contents", page.getContent().toString() , Field.Store.NO, Field.Index.ANALYZED);
 			indexDoc.add(field1);
 
 			Field field2 = new Field("title" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.ANALYZED);
 			indexDoc.add(field2);
 
+			Field field3 = new Field("Exacttitle" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.NOT_ANALYZED);
+			indexDoc.add(field3);
+			if( page.getContent().toString().contains("film") || page.getContent().toString().contains("films")){
+				indexDoc.setBoost(2F);
+			}
+
 			writer.addDocument(indexDoc);
-		//}
 		}
 
 		return writer.numDocs();
@@ -145,16 +124,16 @@ public class WikiIndexer{
       			System.exit(1);
 			}
 		}
-    Date start = new Date();
+    	Date start = new Date();
 
-		String path = args[1];
-		WikiIndexer indexer_obj = new WikiIndexer(path);
+		String documentPath = args[1];
+		WikiIndexer indexer_obj = new WikiIndexer(documentPath);
 
 		int numOfDocs = indexer_obj.indexFiles();
 		System.out.println("Number of articles indexed : " +numOfDocs);
 		indexer_obj.close();
-      Date end = new Date();
-      System.out.println(end.getTime() - start.getTime() + " total milliseconds");
+      	Date end = new Date();
+      	System.out.println(end.getTime() - start.getTime() + " total milliseconds");
 
 	}
 
