@@ -10,6 +10,7 @@ public class WikiConstants{
 	public final static int USER_PAGE=4;
 	public final static int USER_TALK_PAGE=5;
 	public final static int CATEGORY_PAGE=6;
+	public final static int CATEGORY_TALK_PAGE=6;
 	public final static int TEMPLATE_PAGE=7;
 	public final static int FILE_PAGE=8;
 }
