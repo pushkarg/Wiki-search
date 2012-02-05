@@ -4,6 +4,21 @@ public class Page {
 	
 	StringBuffer  title;
 	StringBuffer content;
+	Boolean redirect;
+	StringBuffer timestamp;
+	
+	public Boolean getRedirect() {
+		return redirect;
+	}
+	public void setRedirect(Boolean redirect) {
+		this.redirect = redirect;
+	}
+	public StringBuffer getTimestamp() {
+		return timestamp;
+	}
+	public void setTimestamp(StringBuffer timestamp) {
+		this.timestamp = timestamp;
+	}
 	int flag;
 	
 	public StringBuffer getTitle() {

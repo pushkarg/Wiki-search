@@ -21,6 +21,9 @@ public class XMLJDomParser {
 		Document document;
 		Vector <StringBuffer> title;
 		Vector <StringBuffer> text;
+		Vector <StringBuffer> timestamp;
+		Vector <Boolean> redirect;
+		
 		int tot_page_count, curr_page_count;
 		
 		
@@ -54,16 +57,31 @@ public class XMLJDomParser {
             
             title = new Vector<StringBuffer>(tot_page_count);
             text = new Vector<StringBuffer>(tot_page_count);
+            timestamp = new Vector<StringBuffer>(tot_page_count);
+            redirect = new Vector<Boolean>(tot_page_count);
             
+            int j=0;
             for (int i = 0; i < tot_page_count; i++)
             {
                     Element frameWork = (Element) totalRow.get(i);
                     StringBuffer temp1 = new StringBuffer(frameWork.getChildText("title", root.getNamespace()));
+                    
+                    if (frameWork.getChild("redirect",root.getNamespace()) != null)
+                           	//System.out.println(frameWork.getChild("redirect",root.getNamespace()).getName()+j++);
+                    	redirect.addElement(true);
+                    else
+                    	redirect.addElement(false);
+                    	
+                    	
+                    
                     //System.out.println("Gautham"+temp1+"Gautham");
                     Element revision = frameWork.getChild("revision",root.getNamespace());
                     StringBuffer temp2 = new StringBuffer(revision.getChildText("text", root.getNamespace()));
+                    StringBuffer temp3 = new StringBuffer(revision.getChildText("timestamp", root.getNamespace()));
                     title.addElement(temp1 );
                     text.addElement(temp2 );
+                    timestamp.addElement(temp2 );
+                    
                     
                    
                    
@@ -73,10 +91,9 @@ public class XMLJDomParser {
 
 
 
-		public Page getPageData() throws Exception, IOException
+		public void getPageData(Page newPage) throws Exception, IOException
         {
-				Page newPage = new Page();
-				
+								
 				newPage.setFlag(0);
 				
 				if (curr_page_count>0)
@@ -87,13 +104,7 @@ public class XMLJDomParser {
 					newPage.setFlag(1);
 					curr_page_count--;
 				}
-				else 
-				{	
-					//System.out.println("The file is empty. \n");
-					
-				}
-					
-                return newPage;
+				                
         }
 
 }
