@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
 
-public class Searcher{
+public class WikiSearcher{
 
 	public void searchFiles(String queryStr) throws Exception{
 		String indexDir = "Folder_Index";
@@ -43,7 +43,7 @@ public class Searcher{
 
 		for(int i =0;i<results.length ; i++){
 			Document doc = searcher.doc(results[i].doc);
-			System.out.println(doc.get("title"));
+			System.out.println(doc.get("Exacttitle"));
 		}
 
 	}
@@ -52,7 +52,7 @@ public class Searcher{
     	BufferedReader in =  new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
 		String query = in.readLine();
 
-		Searcher obj = new Searcher();
+		WikiSearcher obj = new WikiSearcher();
 		obj.searchFiles(query);
 		//System.out.println("Query read : " + query);
 	}
