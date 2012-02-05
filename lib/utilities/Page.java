@@ -9,6 +9,7 @@ public class Page {
 	Boolean redirect;
 	StringBuffer timestamp;
 	int flag , page_type;
+	StringBuffer urlList[];
 
 	public Page(){
 		 flag = 0;
