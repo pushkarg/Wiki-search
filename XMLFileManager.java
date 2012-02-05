@@ -5,11 +5,17 @@ import com.ximpleware.*;
 
 public class XMLFileManager {
 	
-	Vector<String> 	spitFileName = new Vector<String>();				
+	Vector<String> 	spitFileName = new Vector<String>();
+	String srcFileName= null;
+	XMLFileManager(String fileName)
+	{
+		srcFileName = fileName;
+	}
+					
      public void splitFiles() throws XPathEvalException, NavException, IOException, XPathParseException
      {
         VTDGen vg = new VTDGen();
-        if (vg.parseFile("/home/maverick/irproject/wikidump/enwiki.xml", true)){
+        if (vg.parseFile(srcFileName, true)){
                 VTDNav vn = vg.getNav();
                 AutoPilot ap = new AutoPilot(vn);
 
@@ -18,7 +24,7 @@ public class XMLFileManager {
                 byte[] ba = vn.getXML().getBytes();
                 int count =0;
                 
-                FileOutputStream fos = new FileOutputStream("/home/maverick/irproject/splitfiles/out"+count+".xml"); 
+                FileOutputStream fos = new FileOutputStream("temp/out"+count+".xml"); 
                 // FileName
                 String fileName;
                 spitFileName.add("out0.xml");
@@ -35,18 +41,30 @@ public class XMLFileManager {
                     	count= count +1;
                     	k = 0;
                     	// open a new one for write 
-                    	fos = new FileOutputStream("/home/maverick/irproject/splitfiles/out"+count+".xml");
+                    	fos = new FileOutputStream("temp/out"+count+".xml");
                     	fileName = "out"+count +".xml";
                     	spitFileName.add(fileName);
                     }
                 }
                 fos.close();
-        }               
+        } 
+
     }
+     
+     public String returnFileName()
+     {
+	       	 Iterator<String> itr = spitFileName.iterator();
+	       	 String result = null;
+	       	 while(itr.hasNext())
+	       	 {
+	       		result =  itr.next().toString();
+	       	 }
+			return result;
+     }
      
      public static void main(String[] argv) throws XPathParseException, XPathEvalException, NavException, IOException
      {
-    	 XMLFileManager mangerObj = new XMLFileManager();
+    	 XMLFileManager mangerObj = new XMLFileManager("/home/maverick/irproject/wikidump/enwiki.xml");
     	 mangerObj.splitFiles();
     	 Iterator<String> itr = mangerObj.spitFileName.iterator();
     	 while(itr.hasNext())
