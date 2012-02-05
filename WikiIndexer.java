@@ -85,26 +85,33 @@ public class WikiIndexer{
 	
 	}
 
+	public Document addFields(Document indexDoc , Page page){
+		Field field1 = new Field("contents", page.getContent().toString() , Field.Store.NO, Field.Index.ANALYZED);
+		indexDoc.add(field1);
+
+		Field field2 = new Field("title" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.ANALYZED);
+		indexDoc.add(field2);
+
+		Field field3 = new Field("Exacttitle" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.NOT_ANALYZED);
+		indexDoc.add(field3);
+		if( page.getContent().toString().contains("film") || page.getContent().toString().contains("films")){
+			indexDoc.setBoost(2F);
+		}
+		
+		return indexDoc;
+	}
+
 	public int indexFiles() throws Exception{
         	
 		while(page.getFlag()==1){
-           	page=xml_parser.getPageData(page);
+           	xml_parser.getPageData(page); //Get a new Page from the XML Parser
 			if( page.getFlag() == 0)
 				break;
 			
+			System.out.println("Inside the index FIles functipon ");
+			inpage.getPageType();
 			Document indexDoc = new Document();
-			Field field1 = new Field("contents", page.getContent().toString() , Field.Store.NO, Field.Index.ANALYZED);
-			indexDoc.add(field1);
-
-			Field field2 = new Field("title" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.ANALYZED);
-			indexDoc.add(field2);
-
-			Field field3 = new Field("Exacttitle" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.NOT_ANALYZED);
-			indexDoc.add(field3);
-			if( page.getContent().toString().contains("film") || page.getContent().toString().contains("films")){
-				indexDoc.setBoost(2F);
-			}
-
+			addFields(indexDoc, page);
 			writer.addDocument(indexDoc);
 		}
 
