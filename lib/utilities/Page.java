@@ -9,7 +9,7 @@ public class Page {
 	StringBuffer page_title;
 	StringBuffer content_raw,content_processed;
 	StringBuffer timestamp;
-	StringBuffer ref_url_list[];
+	StringBuffer []ref_url_list ;
 
 	//Meta data -
 	int flag , page_type;
@@ -68,7 +68,11 @@ public class Page {
 			WikiContentParser content_parser = new WikiContentParser(content_raw);
 
 			//This is where the parsing function calls go 
-			content_parser.extractRefTagsFromContent( ref_url_list);
+			ref_url_list = content_parser.extractRefTagsFromContent( ref_url_list);
+			for(int i =0;i<ref_url_list.length;i++){
+				System.out.println("Url : " + ref_url_list[i] );
+			}
+
 
 			raw_text_processed = true;	//Set the content processed flag to true
 			content_processed = content_raw;//Remove this after the processing has been done.
