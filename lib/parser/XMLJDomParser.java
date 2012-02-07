@@ -82,16 +82,13 @@ public class XMLJDomParser {
                     text.addElement(temp2 );
                     timestamp.addElement(temp2 );
                     
-                    
-                   
-                   
             }
 			
 		}
 
 
 
-		public void getPageData(Page newPage) throws Exception, IOException
+		public int getPageData(Page newPage) throws Exception, IOException
         {
 								
 				newPage.setFlag(0);
@@ -103,7 +100,10 @@ public class XMLJDomParser {
 
 					newPage.setFlag(1);
 					curr_page_count--;
+					return 1;
 				}
+
+				return 0;//There are no pages remaining
 				                
         }
 

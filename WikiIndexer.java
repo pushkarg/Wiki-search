@@ -72,7 +72,7 @@ public class WikiIndexer{
 		setDocumentDirectory(path);
 
 		//Initializing XMLFileManager 
-		xml_files = new XMLFileManager(path);
+		//xml_files = new XMLFileManager(path);
 		
 		//Initializing Index Writer.
 	 	initializeIndexWriter();
@@ -81,6 +81,7 @@ public class WikiIndexer{
         page.setFlag(1);
 
        	String file_name = path;
+		xml_parser= new XMLJDomParser(file_name) ;
 	
 	}
 
@@ -102,23 +103,23 @@ public class WikiIndexer{
 	}
 
 	public int indexFiles() throws Exception{
-        	
-		System.out.println("Coming here ! ");
-		while(xml_files.filesExist()){
-			String file_name = xml_files.returnFileName();
-			System.out.println("FIle name : " + file_name);
-			xml_parser= new XMLJDomParser("temp/"+file_name) ;
-			while(page.getFlag() ==1 ){
-           		xml_parser.getPageData(page); //Get a new Page from the XML Parser
-				if( page.getFlag() == 0)
-					break;
-				
-				System.out.println("Inside the index FIles function ");
-				int type = page.getPageType();
-				Document indexDoc = new Document();
-				addFields(indexDoc, page);
-				writer.addDocument(indexDoc);
-			}
+       	
+		int i=0;
+		while( xml_parser.getPageData(page) ==1 ){
+       		//xml_parser.getPageData(page); //Get a new Page from the XML Parser
+			
+			int type = page.getPageType();
+			Document indexDoc = new Document();
+			addFields(indexDoc, page);
+			writer.addDocument(indexDoc);
+
+			//System.out.println("Content : " +page.getContent() );
+			
+			//Temp Code . Remove it l8r
+			i++;
+			if(i==1)
+				break;
+			//Temp Code
 		}
 
 		return writer.numDocs();
