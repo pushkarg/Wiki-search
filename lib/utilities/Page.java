@@ -2,6 +2,7 @@ package utilities;
 
 import utilities.WikiConstants;
 import parser.WikiContentParser;
+import datatypes.*;
 
 public class Page {
 
@@ -9,7 +10,7 @@ public class Page {
 	StringBuffer page_title;
 	StringBuffer content_raw,content_processed;
 	StringBuffer timestamp;
-	StringBuffer []ref_url_list ;
+	WikiUrl []ref_url_list;
 
 	//Meta data -
 	int flag , page_type;
@@ -69,9 +70,11 @@ public class Page {
 
 			//This is where the parsing function calls go 
 			ref_url_list = content_parser.extractRefTagsFromContent( ref_url_list);
+			/*
 			for(int i =0;i<ref_url_list.length;i++){
-				System.out.println("Url : " + ref_url_list[i] );
+				System.out.println("Url : " + ref_url_list[i].getUrl());
 			}
+			*/
 
 
 			raw_text_processed = true;	//Set the content processed flag to true
