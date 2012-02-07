@@ -20,6 +20,7 @@ public class Page {
 		flag = 0;
 		page_type = WikiConstants.UNKNOWN_PAGE;
 		resetContentProcessedFlag();
+		WikiUrl ref_url_list[] = new WikiUrl[0];
 	}
 
 	//This is a function which can be used to check if the String content has been processed or not. It will be used 
@@ -69,12 +70,11 @@ public class Page {
 			WikiContentParser content_parser = new WikiContentParser(content_raw);
 
 			//This is where the parsing function calls go 
+
+			//Extract the Urls from <ref> tags
 			ref_url_list = content_parser.extractRefTagsFromContent( ref_url_list);
-			/*
-			for(int i =0;i<ref_url_list.length;i++){
-				System.out.println("Url : " + ref_url_list[i].getUrl());
-			}
-			*/
+			
+			//Extract all the strings in Bold & Italics 
 
 
 			raw_text_processed = true;	//Set the content processed flag to true
@@ -90,6 +90,15 @@ public class Page {
 	public void setContent(StringBuffer content) {
 		this.content_raw = content;
 	}
+
+	public WikiUrl[] getRefUrlsList(){
+		return ref_url_list;
+	}
+
+	public int getNumRefUrls(){
+		return ref_url_list.length;
+	}
+		
 
 	public void resetPage(){
 	//This function can be used to set all the properties of the Page object to blank. This is useful when the same Page object is used for different Wiki articles, without instantiating new Objs

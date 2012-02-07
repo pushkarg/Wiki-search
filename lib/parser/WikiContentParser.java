@@ -10,6 +10,10 @@ public class  WikiContentParser{
 		content_text = text;
 	}
 
+	public StringBuffer getContentText(){
+		 return content_text;
+	}
+
 	public void loadBufferWithRawContent(StringBuffer raw_text ){
 		content_text = raw_text;
 	}
@@ -24,6 +28,7 @@ public class  WikiContentParser{
 		int ref_index = 0;
 		WikiUrl []temp_url_list = new WikiUrl[100];
 
+		//Extract strings with the pattern given below
 		Pattern p = Pattern.compile("<ref[^<]*</ref>", Pattern.MULTILINE);
 		Matcher m = p.matcher(content_text);
 
@@ -33,16 +38,15 @@ public class  WikiContentParser{
 		}
 
 		temp_url_list=new WikiUrl[ref_index];
-		/*
-		for(int i=0;i<ref_index;i++)
-			ref_tags[i] = new StringBuffer( tag_list[i]);
-		*/
 
+		//Replace the <ref> tags with blank strings in the main string, once they have been extracted
 		for(int i=0;i<temp_url_list.length ; i++){
 			 int start_index = content_text.indexOf(tag_list[i].toString());
 			 content_text.replace(start_index , start_index + tag_list[i].length() , "");
 		}
 
+
+		//Extract Urls
 		Pattern url_pattern = Pattern.compile("http://[a-z.]*[com|org|net][^ ]*");
 		int num_of_valid_urls=0;
 		for(int i=0;i<ref_index;i++){

@@ -106,7 +106,6 @@ public class WikiIndexer{
        	
 		int i=0;
 		while( xml_parser.getPageData(page) ==1 ){
-       		//xml_parser.getPageData(page); //Get a new Page from the XML Parser
 			
 			int type = page.getPageType();
 			Document indexDoc = new Document();
@@ -117,9 +116,10 @@ public class WikiIndexer{
 			
 			//Temp Code . Remove it l8r
 			i++;
-			if(i==1)
+			if(i==6)
 				break;
 			//Temp Code
+			page.resetPage();
 		}
 
 		return writer.numDocs();
