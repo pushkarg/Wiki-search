@@ -72,7 +72,7 @@ public class WikiIndexer{
 		setDocumentDirectory(path);
 
 		//Initializing XMLFileManager 
-		//xml_files = new XMLFileManager(path);
+		xml_files = new XMLFileManager(path);
 		
 		//Initializing Index Writer.
 	 	initializeIndexWriter();
@@ -80,8 +80,6 @@ public class WikiIndexer{
 		page = new Page();
         page.setFlag(1);
 
-       	String file_name = path;
-		xml_parser= new XMLJDomParser(file_name) ;
 	
 	}
 
@@ -105,21 +103,19 @@ public class WikiIndexer{
 	public int indexFiles() throws Exception{
        	
 		int i=0;
-		while( xml_parser.getPageData(page) ==1 ){
+		while(xml_files.filesExist()){
+       		String file_name = xml_files.returnFileName();
+			xml_parser= new XMLJDomParser(file_name) ;
+			while( xml_parser.getPageData(page) ==1 ){
 			
-			int type = page.getPageType();
-			Document indexDoc = new Document();
-			addFields(indexDoc, page);
-			writer.addDocument(indexDoc);
-
-			//System.out.println("Content : " +page.getContent() );
-			
-			//Temp Code . Remove it l8r
-			i++;
-			if(i==6)
-				break;
-			//Temp Code
-			page.resetPage();
+				int type = page.getPageType();
+				Document indexDoc = new Document();
+				addFields(indexDoc, page);
+				writer.addDocument(indexDoc);
+	
+				//System.out.println("Content : " +page.getContent() );
+				page.resetPage();
+			}
 		}
 
 		return writer.numDocs();

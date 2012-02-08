@@ -13,7 +13,8 @@ public class XMLFileManager {
 	Iterator<String> itr;
 	public XMLFileManager(String fileName)
 	{
-		srcFileName = "/home/maverick/irproject/wikidump/enwiki.xml";
+		srcFileName = fileName;
+		//srcFileName = "/home/maverick/irproject/wikidump/enwiki.xml";
 		try{
 			System.out.println("Coming to constructor ");
 			// Check for the Filesize
@@ -22,7 +23,7 @@ public class XMLFileManager {
 			System.out.println("File Size" + file.length());
 			//TODO Only if the file size if more than the threshold value is it made to split.	Need to decide
 			// on optimum size
-			if(file.length() == 204800)
+			if(file.length() >= 204800)
 			{
 				splitFiles();
 				itr = splitFileName.iterator();
@@ -46,7 +47,7 @@ public class XMLFileManager {
                 byte[] ba = vn.getXML().getBytes();
                 int count =0;
                 
-                FileOutputStream fos = new FileOutputStream("/home/maverick/irproject/temp/out"+count+".xml"); 
+                FileOutputStream fos = new FileOutputStream("temp/out"+count+".xml"); 
                 // FileName
                 String fileName;
                 splitFileName.add("out0.xml");
@@ -68,7 +69,7 @@ public class XMLFileManager {
                     	count= count +1;
                     	k = 0;
                     	// open a new one for write 
-                    	fos = new FileOutputStream("/home/maverick/irproject/temp/out"+count+".xml");
+                    	fos = new FileOutputStream("temp/out"+count+".xml");
                     	fileName = "out"+count +".xml";
                     	splitFileName.add(fileName);
                     }
@@ -103,19 +104,6 @@ public class XMLFileManager {
 	       		result =  itr.next().toString();
 				file_count++;
 	       	 }
-			return result;
+			return "temp/" +result;
      }
-     
-	 /*
-     public static void main(String[] argv) throws XPathParseException, XPathEvalException, NavException, IOException
-     {
-    	 XMLFileManager mangerObj = new XMLFileManager("/home/maverick/irproject/wikidump/enwiki.xml");
-    	 mangerObj.splitFiles();
-    	 Iterator<String> itr = mangerObj.splitFileName.iterator();
-    	 while(itr.hasNext())
-    	 {
-    		 System.out.println(itr.next());
-    	 }
-     }
-	 */
 }
