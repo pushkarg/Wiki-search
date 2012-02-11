@@ -13,4 +13,11 @@ public class WikiConstants{
 	public final static int CATEGORY_TALK_PAGE=6;
 	public final static int TEMPLATE_PAGE=7;
 	public final static int FILE_PAGE=8;
+	public final static int REDIRECT_PAGE=9;
+
+	//Phrase type constants
+	public final static int BOLD_AND_ITALICS=20;
+	public final static int BOLD=21;
+	public final static int ITALICS=22;
+
 }

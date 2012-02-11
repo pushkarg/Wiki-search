@@ -109,12 +109,20 @@ public class WikiIndexer{
 			while( xml_parser.getPageData(page) ==1 ){
 			
 				int type = page.getPageType();
+				if(page.isRedirect() == true)	//Ignore redirect pages for now
+					continue;			
 				Document indexDoc = new Document();
 				addFields(indexDoc, page);
 				writer.addDocument(indexDoc);
-	
-				//System.out.println("Content : " +page.getContent() );
 				page.resetPage();
+
+				
+
+				//Remove this
+				if(i==40)
+					break;
+				i++;
+				//Remove this
 			}
 		}
 

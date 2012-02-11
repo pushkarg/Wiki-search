@@ -11,6 +11,10 @@ public class Page {
 	StringBuffer content_raw,content_processed;
 	StringBuffer timestamp;
 	WikiUrl []ref_url_list;
+	WikiPhrase []bold_and_italic_text;
+	WikiPhrase []bold_text;
+	WikiPhrase []italic_text;
+	//Note - In case you add a new variable here, reset it in the resetPage() function
 
 	//Meta data -
 	int flag , page_type;
@@ -18,9 +22,10 @@ public class Page {
 
 	public Page(){
 		flag = 0;
+		redirect = false;
 		page_type = WikiConstants.UNKNOWN_PAGE;
 		resetContentProcessedFlag();
-		WikiUrl ref_url_list[] = new WikiUrl[0];
+		ref_url_list = new WikiUrl[0];
 	}
 
 	//This is a function which can be used to check if the String content has been processed or not. It will be used 
@@ -33,7 +38,7 @@ public class Page {
 		raw_text_processed = false;
 	}
 	
-	public Boolean getRedirect() {
+	public Boolean isRedirect() {
 		return redirect;
 	}
 
@@ -72,9 +77,11 @@ public class Page {
 			//This is where the parsing function calls go 
 
 			//Extract the Urls from <ref> tags
-			//ref_url_list = content_parser.extractRefTagsFromContent( ref_url_list);
-			
-			//Extract all the strings in Bold & Italics 
+			ref_url_list = content_parser.extractRefTagsFromContent( ref_url_list);
+		
+			//Extract all the strings in Bold, Italics , Bold & italics
+			bold_and_italic_text = content_parser.extractBoldAndItalicText(); //Bold & Italics
+			//System.out.println( content_parser.getContentText() );
 
 
 			raw_text_processed = true;	//Set the content processed flag to true
@@ -95,6 +102,10 @@ public class Page {
 		return ref_url_list;
 	}
 
+	public WikiUrl getRefUrl(int num){
+		return ref_url_list[num];
+	}
+
 	public int getNumRefUrls(){
 		return ref_url_list.length;
 	}
@@ -108,10 +119,14 @@ public class Page {
 		timestamp=new StringBuffer();
 		flag = 0;
 		resetContentProcessedFlag();
+		ref_url_list = new WikiUrl[0];
+		bold_and_italic_text = new WikiPhrase[0];
+		bold_text = new WikiPhrase[0];
+		italic_text = new WikiPhrase[0];
 	}
 
 	public int getPageType(){
-		 if(page_type != WikiConstants.UNKNOWN_PAGE )
+		if(page_type != WikiConstants.UNKNOWN_PAGE )
 		 	return page_type;	//Return the page type if it is known already
 
 		//Else parse the title field and get the page type

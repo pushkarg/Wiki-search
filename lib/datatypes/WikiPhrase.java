@@ -5,6 +5,9 @@ public class WikiPhrase {
 	StringBuffer phrase;
 	int position_in_text;
 	int type; 	//Bold or italic text or Heading
+
+	public WikiPhrase(){
+	}
 	
 	public WikiPhrase(String phrase){
 		this.phrase = new StringBuffer(phrase);
