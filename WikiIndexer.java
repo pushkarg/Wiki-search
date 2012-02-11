@@ -80,7 +80,6 @@ public class WikiIndexer{
 		page = new Page();
         page.setFlag(1);
 
-       	String file_name = path;
 	
 	}
 
@@ -102,22 +101,20 @@ public class WikiIndexer{
 	}
 
 	public int indexFiles() throws Exception{
-        	
-		System.out.println("Coming here ! ");
+       	
+		int i=0;
 		while(xml_files.filesExist()){
-			String file_name = xml_files.returnFileName();
-			System.out.println("FIle name : " + file_name);
-			xml_parser= new XMLJDomParser("temp/"+file_name) ;
-			while(page.getFlag() ==1 ){
-           		xml_parser.getPageData(page); //Get a new Page from the XML Parser
-				if( page.getFlag() == 0)
-					break;
-				
-				System.out.println("Inside the index FIles function ");
+       		String file_name = xml_files.returnFileName();
+			xml_parser= new XMLJDomParser(file_name) ;
+			while( xml_parser.getPageData(page) ==1 ){
+			
 				int type = page.getPageType();
 				Document indexDoc = new Document();
 				addFields(indexDoc, page);
 				writer.addDocument(indexDoc);
+	
+				//System.out.println("Content : " +page.getContent() );
+				page.resetPage();
 			}
 		}
 

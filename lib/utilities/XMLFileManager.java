@@ -10,12 +10,24 @@ public class XMLFileManager {
 	Vector<String> 	splitFileName = new Vector<String>();
 	String srcFileName= null;
 	int file_count = 0;
+	Iterator<String> itr;
 	public XMLFileManager(String fileName)
 	{
 		srcFileName = fileName;
+		//srcFileName = "/home/maverick/irproject/wikidump/enwiki.xml";
 		try{
 			System.out.println("Coming to constructor ");
-    		splitFiles();
+			// Check for the Filesize
+			File file = new File(srcFileName);
+			
+			System.out.println("File Size" + file.length());
+			//TODO Only if the file size if more than the threshold value is it made to split.	Need to decide
+			// on optimum size
+			if(file.length() >= 204800)
+			{
+				splitFiles();
+				itr = splitFileName.iterator();
+			}
 		}catch(Exception e){
 		}
 	}
@@ -30,6 +42,8 @@ public class XMLFileManager {
 
 				ap.selectXPath("/mediawiki/page");
                 int i=0,k=0;
+                             
+                int array[] = new int[10];
                 byte[] ba = vn.getXML().getBytes();
                 int count =0;
                 
@@ -39,14 +53,19 @@ public class XMLFileManager {
                 splitFileName.add("out0.xml");
                 while((i=ap.evalXPath())!=-1)
                 {	   
-                	fos.write("<mediawiki>".getBytes());
-                    long l = vn.getElementFragment();
-                    fos.write(ba, (int)l, (int)(l>>32));
-                    fos.write("</mediawiki>".getBytes());
+                	array[count] =-1;
+                	if(k == 0)
+                	{
+                		fos.write("<mediawiki>".getBytes());
+                	}
+            		long l = vn.getElementFragment();
+            		fos.write(ba, (int)l, (int)(l>>32));
                     k++;
                     if(k == 3000)
                     {
+                    	fos.write("</mediawiki>".getBytes());
                     	fos.close();
+                    	array[count] = 0; //the file perfectly formulated
                     	count= count +1;
                     	k = 0;
                     	// open a new one for write 
@@ -54,6 +73,13 @@ public class XMLFileManager {
                     	fileName = "out"+count +".xml";
                     	splitFileName.add(fileName);
                     }
+                }
+                for (int j=0; j<=count; j++)
+                {
+                	if(array[j]== -1)
+                	{
+                		fos.write("</mediawiki>".getBytes());
+                	}
                 }
                 fos.close();
         } 
@@ -71,26 +97,13 @@ public class XMLFileManager {
      
      public String returnFileName()
      {
-	       	 Iterator<String> itr = splitFileName.iterator();
+	       	 
 	       	 String result = null;
-	       	 while(itr.hasNext())
+	       	 if(itr.hasNext())
 	       	 {
 	       		result =  itr.next().toString();
 				file_count++;
 	       	 }
-			return result;
+			return "temp/" +result;
      }
-     
-	 /*
-     public static void main(String[] argv) throws XPathParseException, XPathEvalException, NavException, IOException
-     {
-    	 XMLFileManager mangerObj = new XMLFileManager("/home/maverick/irproject/wikidump/enwiki.xml");
-    	 mangerObj.splitFiles();
-    	 Iterator<String> itr = mangerObj.splitFileName.iterator();
-    	 while(itr.hasNext())
-    	 {
-    		 System.out.println(itr.next());
-    	 }
-     }
-	 */
 }
