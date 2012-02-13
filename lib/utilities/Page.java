@@ -77,10 +77,10 @@ public class Page {
 			//This is where the parsing function calls go 
 
 			//Extract the Urls from <ref> tags
-			ref_url_list = content_parser.extractRefTagsFromContent( ref_url_list);
+			//ref_url_list = content_parser.extractRefTagsFromContent( ref_url_list);
 		
 			//Extract all the strings in Bold, Italics , Bold & italics
-			bold_and_italic_text = content_parser.extractBoldAndItalicText(); //Bold & Italics
+			//bold_and_italic_text = content_parser.extractBoldAndItalicText(); //Bold & Italics
 			//System.out.println( content_parser.getContentText() );
 
 

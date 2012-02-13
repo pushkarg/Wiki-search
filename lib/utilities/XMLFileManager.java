@@ -23,7 +23,7 @@ public class XMLFileManager {
 			System.out.println("File Size" + file.length());
 			//TODO Only if the file size if more than the threshold value is it made to split.	Need to decide
 			// on optimum size
-			if(file.length() >= 204800)
+			if(file.length() >= 404800)
 			{
 				splitFiles();
 				itr = splitFileName.iterator();

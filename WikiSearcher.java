@@ -43,7 +43,7 @@ public class WikiSearcher{
 
 		for(int i =0;i<results.length ; i++){
 			Document doc = searcher.doc(results[i].doc);
-			System.out.println(doc.get("Exacttitle"));
+			System.out.println(doc.get("title"));
 		}
 
 	}
