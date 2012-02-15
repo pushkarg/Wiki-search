@@ -1,33 +1,57 @@
 package utilities;
 
 import java.io.*;
+import java.io.File;
 import java.util.*;
 
 import com.ximpleware.*;
+import java.nio.*;
 
 public class XMLFileManager {
 	
 	Vector<String> 	splitFileName = new Vector<String>();
+	Vector<String>  nonSplitFileName = new Vector<String>();
 	String srcFileName= null;
-	int file_count = 0;
+	int file_count = 0, file_count_nonSplitFiles=0;
 	Iterator<String> itr;
+	Iterator<String> itr2;
+	boolean alreadyRead = false;
+	String fullFilePath= null;
 	public XMLFileManager(String fileName)
 	{
+		
+		//srcFileName = fileName;
 		srcFileName = fileName;
+		//"/home/maverick/workspace/milestonedump/";
+		
 		//srcFileName = "/home/maverick/irproject/wikidump/enwiki.xml";
 		try{
 			System.out.println("Coming to constructor ");
 			// Check for the Filesize
 			File file = new File(srcFileName);
+			String[] files = file.list();
 			
-			System.out.println("File Size" + file.length());
-			//TODO Only if the file size if more than the threshold value is it made to split.	Need to decide
-			// on optimum size
-			if(file.length() >= 404800)
+			// loop through each file
+			for(int i=0; i<files.length; i++)
 			{
-				splitFiles();
-				itr = splitFileName.iterator();
+				//System.out.println("File Size" + files[i].length());
+				//TODO Only if the file size if more than the threshold value is it made to split.	Need to decide
+				// on optimum size
+				fullFilePath = srcFileName + files[i];
+				File temp = new File(fullFilePath);
+				System.out.println("File Size" + temp.length());
+				if(temp.length() >= 20480000)
+				{
+					splitFiles();
+					itr = splitFileName.iterator();
+				}
+				else
+				{
+					nonSplitFileName.add(files[i].toString());
+					itr2 = nonSplitFileName.iterator();
+				}
 			}
+
 		}catch(Exception e){
 		}
 	}
@@ -35,7 +59,7 @@ public class XMLFileManager {
      public void splitFiles() throws XPathEvalException, NavException, IOException, XPathParseException
      {
         VTDGen vg = new VTDGen();
-        if (vg.parseFile(srcFileName, true)){
+        if (vg.parseFile(fullFilePath, true)){
 				System.out.println("Coming to splitFIles ");
                 VTDNav vn = vg.getNav();
                 AutoPilot ap = new AutoPilot(vn);
@@ -47,7 +71,7 @@ public class XMLFileManager {
                 byte[] ba = vn.getXML().getBytes();
                 int count =0;
                 
-                FileOutputStream fos = new FileOutputStream("temp/out"+count+".xml"); 
+                FileOutputStream fos = new FileOutputStream("temp/"+ "out" +count+".xml"); 
                 // FileName
                 String fileName;
                 splitFileName.add("out0.xml");
@@ -69,8 +93,8 @@ public class XMLFileManager {
                     	count= count +1;
                     	k = 0;
                     	// open a new one for write 
-                    	fos = new FileOutputStream("temp/out"+count+".xml");
-                    	fileName = "out"+count +".xml";
+                    	fos = new FileOutputStream("temp/"+"out"+count+".xml");
+                    	fileName = "out"+ count +".xml";
                     	splitFileName.add(fileName);
                     }
                 }
@@ -88,22 +112,42 @@ public class XMLFileManager {
     }
 
 	public boolean filesExist(){
-		System.out.println("File count = " +file_count + " SplitFileName.size : " +  splitFileName.size()  );
-		if(file_count < splitFileName.size() )
-			return true;
-		else 
-			return false;
+		
+		boolean result = false;
+		if(splitFileName.size()>0)
+		{
+			System.out.println("File count = " +file_count + " SplitFileName.size : " +  splitFileName.size()  );
+
+			if(file_count < splitFileName.size() )
+				result = true;
+		}
+		else if(nonSplitFileName.size()>0 && file_count_nonSplitFiles < nonSplitFileName.size())// file is not split, so, just returning true as we already know that the file exists
+		{
+			result = true;
+			//alreadyRead = true; //this done, so that the file is read only once
+		}
+		return result;
 	}
      
      public String returnFileName()
      {
-	       	 
-	       	 String result = null;
+    	 String result = null;
+    	 if(itr2.hasNext())
+    	 {
+    		 result = itr2.next().toString();
+    		 file_count_nonSplitFiles++;
+    		 result = "milestonedump/" +result;
+    	 }
+    	 else
+    	 {
 	       	 if(itr.hasNext())
 	       	 {
 	       		result =  itr.next().toString();
 				file_count++;
+				result = "temp/" +result;
 	       	 }
-			return "temp/" +result;
+    	 }
+	       	 
+		return result;
      }
 }

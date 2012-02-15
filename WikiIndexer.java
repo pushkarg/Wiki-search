@@ -31,7 +31,7 @@ public class WikiIndexer{
 	String index_dir="Folder_Index" , doc_dir;
 	public WikiUtils utils_Obj;
 	private XMLFileManager xml_files;
-	private XMLJDomParser xml_parser;
+	private static XMLJDomParser xml_parser;
 	final int NUM_OF_PAGES = 10;
 	public Page page;
 
@@ -79,7 +79,6 @@ public class WikiIndexer{
 
 		page = new Page();
         page.setFlag(1);
-
 	
 	}
 
@@ -87,36 +86,36 @@ public class WikiIndexer{
 		Field field1 = new Field("contents", page.getContent().toString() , Field.Store.NO, Field.Index.ANALYZED);
 		indexDoc.add(field1);
 
-		Field field2 = new Field("title" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.ANALYZED);
+		Field field2 = new Field("title" ,  page.getTitle().toString() ,Field.Store.NO, Field.Index.ANALYZED);
 		indexDoc.add(field2);
-		//field2.setBoost(1.5F); // The title needs to have a higher weight than other fields.
-		System.out.println("Indexed : " + page.getTitle().toString() );
+		field2.setBoost(1.5F); // The title needs to have a higher weight than other fields.
 
-		/*
 		Field field3 = new Field("Exacttitle" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.NOT_ANALYZED);
 		indexDoc.add(field3);
 		if( page.getContent().toString().contains("film") || page.getContent().toString().contains("films")){
 			indexDoc.setBoost(2F);
 		}
-		*/
 		
 		return indexDoc;
 	}
 
-	public int indexFiles() throws Exception{
+	public int indexFiles(Date start) throws Exception{
        	
 		int i=0;
 		while(xml_files.filesExist()){
+			
        		String file_name = xml_files.returnFileName();
 			xml_parser= new XMLJDomParser(file_name) ;
-			while( xml_parser.getPageData(page) ==1 ){
+			while( xml_parser.getPageData(page) == 1 ){
 			
 				int type = page.getPageType();
-				if(page.isRedirect() == true)	//Ignore redirect pages for now
-					continue;			
 				Document indexDoc = new Document();
 				addFields(indexDoc, page);
+				//TODO need to have some sort of check here, same document should be indexed only once
+				// In our case since the documents are static, the counter should always remain the same.
 				writer.addDocument(indexDoc);
+			
+				//System.out.println("Content : " +page.getContent() );
 				page.resetPage();
 			}
 		}
@@ -142,8 +141,13 @@ public class WikiIndexer{
 		String documentPath = args[1];
 		WikiIndexer indexer_obj = new WikiIndexer(documentPath);
 
-		int numOfDocs = indexer_obj.indexFiles();
-		System.out.println("Number of articles indexed : " +numOfDocs);
+		int numOfDocs = 0;
+		numOfDocs = indexer_obj.indexFiles(start);
+		
+		
+		System.out.println("Total Number of articles Parsed : " + xml_parser.returnArticlecount());
+		// The article indexed in not correct, we need to figure out something for the one below,
+		System.out.println("Total Number of articles indexed : " +numOfDocs);
 		indexer_obj.close();
       	Date end = new Date();
       	System.out.println(end.getTime() - start.getTime() + " total milliseconds");
