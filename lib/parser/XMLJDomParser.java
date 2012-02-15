@@ -25,7 +25,7 @@ public class XMLJDomParser {
 		Vector <Boolean> redirect;
 		
 		int tot_page_count, curr_page_count;
-		
+		static int cummulativePageCount=0;
 		
 		
 		
@@ -50,10 +50,12 @@ public class XMLJDomParser {
             Element root = document.getRootElement();
             
             List totalRow = root.getChildren("page" , root.getNamespace() );
-            System.out.println("total articles : "+ totalRow.size() );
+            System.out.println("total Pages : "+ totalRow.size() );
             
             tot_page_count=totalRow.size();
             curr_page_count=tot_page_count;
+            // keeps track of the total number of pages
+            cummulativePageCount+= tot_page_count;
             
             title = new Vector<StringBuffer>(tot_page_count);
             text = new Vector<StringBuffer>(tot_page_count);
@@ -106,6 +108,13 @@ public class XMLJDomParser {
 				return 0;//There are no pages remaining
 				                
         }
+		
+		public int returnArticlecount()
+		{
+		
+			return cummulativePageCount;
+		}
+		
 
 }
 
