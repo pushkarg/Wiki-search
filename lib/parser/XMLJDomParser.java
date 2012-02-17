@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.JDOMException;
@@ -99,7 +97,8 @@ public class XMLJDomParser {
 				{
 					newPage.setContent(text.get(curr_page_count-1));
 					newPage.setTitle(title.get(curr_page_count-1));
-
+					newPage.setRedirect(redirect.get(curr_page_count - 1));
+					newPage.setTimestamp(timestamp.get(curr_page_count - 1));
 					newPage.setFlag(1);
 					curr_page_count--;
 					return 1;

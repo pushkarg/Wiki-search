@@ -5,7 +5,7 @@ import java.io.File;
 import java.util.*;
 
 import com.ximpleware.*;
-import java.nio.*;
+//import java.nio.*;
 
 public class XMLFileManager {
 	
@@ -29,7 +29,8 @@ public class XMLFileManager {
 			System.out.println("Coming to constructor ");
 			// Check for the Filesize
 			File file = new File(srcFileName);
-			String[] files = file.list();
+			String files[] = file.list();
+			
 			
 			// loop through each file
 			for(int i=0; i<files.length; i++)
@@ -42,7 +43,14 @@ public class XMLFileManager {
 				System.out.println("File Size" + temp.length());
 				if(temp.length() >= 20480000)
 				{
-					splitFiles();
+					try
+					{
+						splitFiles();
+					}
+					catch(Exception e)
+					{
+						System.out.println(e.toString());
+					}
 					itr = splitFileName.iterator();
 				}
 				else
@@ -51,7 +59,7 @@ public class XMLFileManager {
 					itr2 = nonSplitFileName.iterator();
 				}
 			}
-
+			System.out.println("i am here");
 		}catch(Exception e){
 		}
 	}
@@ -67,14 +75,14 @@ public class XMLFileManager {
 				ap.selectXPath("/mediawiki/page");
                 int i=0,k=0;
                              
-                int array[] = new int[10];
+                int array[] = new int[1000];
                 byte[] ba = vn.getXML().getBytes();
                 int count =0;
                 
                 FileOutputStream fos = new FileOutputStream("temp/"+ "out" +count+".xml"); 
                 // FileName
                 String fileName;
-                splitFileName.add("out0.xml");
+                splitFileName.add("out0.xml".toString());
                 while((i=ap.evalXPath())!=-1)
                 {	   
                 	array[count] =-1;
@@ -95,7 +103,7 @@ public class XMLFileManager {
                     	// open a new one for write 
                     	fos = new FileOutputStream("temp/"+"out"+count+".xml");
                     	fileName = "out"+ count +".xml";
-                    	splitFileName.add(fileName);
+                    	splitFileName.add(fileName.toString());
                     }
                 }
                 for (int j=0; j<=count; j++)
@@ -132,7 +140,7 @@ public class XMLFileManager {
      public String returnFileName()
      {
     	 String result = null;
-    	 if(itr2.hasNext())
+    	 if(itr2!=null && itr2.hasNext())
     	 {
     		 result = itr2.next().toString();
     		 file_count_nonSplitFiles++;
@@ -140,7 +148,7 @@ public class XMLFileManager {
     	 }
     	 else
     	 {
-	       	 if(itr.hasNext())
+	       	 if(itr!=null && itr.hasNext())
 	       	 {
 	       		result =  itr.next().toString();
 				file_count++;

@@ -88,13 +88,13 @@ public class WikiIndexer{
 
 		Field field2 = new Field("title" ,  page.getTitle().toString() ,Field.Store.NO, Field.Index.ANALYZED);
 		indexDoc.add(field2);
-		field2.setBoost(1.5F); // The title needs to have a higher weight than other fields.
+		//field2.setBoost(1.5F); // The title needs to have a higher weight than other fields.
 
 		Field field3 = new Field("Exacttitle" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.NOT_ANALYZED);
 		indexDoc.add(field3);
-		if( page.getContent().toString().contains("film") || page.getContent().toString().contains("films")){
-			indexDoc.setBoost(2F);
-		}
+		//if( page.getContent().toString().contains("film") || page.getContent().toString().contains("films")){
+		//	indexDoc.setBoost(2F);
+		//}
 		
 		return indexDoc;
 	}
@@ -139,6 +139,7 @@ public class WikiIndexer{
     	Date start = new Date();
 
 		String documentPath = args[1];
+		//System.out.println(documentPath);
 		WikiIndexer indexer_obj = new WikiIndexer(documentPath);
 
 		int numOfDocs = 0;
