@@ -92,6 +92,7 @@ public class WikiIndexer{
 
 		Field field3 = new Field("Exacttitle" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.NOT_ANALYZED);
 		indexDoc.add(field3);
+		
 		//if( page.getContent().toString().contains("film") || page.getContent().toString().contains("films")){
 		//	indexDoc.setBoost(2F);
 		//}

@@ -59,7 +59,7 @@ public class XMLFileManager {
 					itr2 = nonSplitFileName.iterator();
 				}
 			}
-			System.out.println("i am here");
+			//System.out.println("i am here");
 		}catch(Exception e){
 		}
 	}

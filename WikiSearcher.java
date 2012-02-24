@@ -35,22 +35,23 @@ public class WikiSearcher{
 		
 		//System.out.println("Query being searched : "+queryStr);
 		Query query = parser.parse(queryStr);
-		TopDocs hits = searcher.search(query, 10);
+		TopDocs hits = searcher.search(query, 30);
 
-		System.out.println("\nFound "+hits.totalHits +" documents :\n");
+		//System.out.println("\nFound "+hits.totalHits +" documents :\n");
 
 		ScoreDoc results[] = hits.scoreDocs;
 
 		for(int i =0;i<results.length ; i++){
 			Document doc = searcher.doc(results[i].doc);
-			System.out.println(doc.get("title"));
+			System.out.println(doc.get("Exacttitle"));
 		}
 
 	}
 	public static void main(String args[]) throws Exception{
-	  	System.out.println("Enter the query : ");
-    	BufferedReader in =  new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
-		String query = in.readLine();
+	  	//System.out.println("Enter the query : ");
+    	//BufferedReader in =  new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
+		//String query = in.readLine();
+		String query = args[0];
 
 		WikiSearcher obj = new WikiSearcher();
 		obj.searchFiles(query);
