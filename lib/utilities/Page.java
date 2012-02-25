@@ -1,5 +1,7 @@
 package utilities;
 
+import java.util.Vector;
+
 import utilities.WikiConstants;
 import parser.WikiContentParser;
 import datatypes.*;
@@ -11,9 +13,9 @@ public class Page {
 	StringBuffer content_raw,content_processed;
 	StringBuffer timestamp;
 	WikiUrl []ref_url_list;
-	WikiPhrase []bold_and_italic_text;
-	WikiPhrase []bold_text;
-	WikiPhrase []italic_text;
+	Vector <WikiPhrase> bold_and_italic_text;
+	Vector <WikiPhrase> bold_text;
+	Vector <WikiPhrase> italic_text;
 	StringBuffer summary_text;
 	//!!!!!!!!Note - In case you add a new variable here, reset it in the resetPage() function!!!!!!!!!!!
 
@@ -84,12 +86,16 @@ public class Page {
 			bold_and_italic_text = content_parser.extractBoldAndItalicText(); //Bold & Italics
 			//System.out.println( content_parser.getContentText() );
 
+			// the order of execution of bold_italic, bold and italic are important
+			bold_text = content_parser.extractBoldText();
+			italic_text = content_parser.extractItalicText();
+			
+						
 			//Extract the links from the document
 
 			//Extract the summary text (This should be called after extracting links)
 			summary_text = content_parser.getSummaryText();
 			//System.out.println("\n\n\nSummary : " + summary_text );
-
 
 			raw_text_processed = true;	//Set the content processed flag to true
 			content_processed = content_raw;//Remove this after the processing has been done.
@@ -127,9 +133,9 @@ public class Page {
 		flag = 0;
 		resetContentProcessedFlag();
 		ref_url_list = new WikiUrl[0];
-		bold_and_italic_text = new WikiPhrase[0];
-		bold_text = new WikiPhrase[0];
-		italic_text = new WikiPhrase[0];
+		bold_and_italic_text = null;
+		bold_text = null;
+		italic_text = null;
 		summary_text = new StringBuffer();
 	}
 
