@@ -115,7 +115,7 @@ public class WikiIndexer{
 				//TODO need to have some sort of check here, same document should be indexed only once
 				// In our case since the documents are static, the counter should always remain the same.
 				writer.addDocument(indexDoc);
-			
+
 				//System.out.println("Content : " +page.getContent() );
 				page.resetPage();
 			}

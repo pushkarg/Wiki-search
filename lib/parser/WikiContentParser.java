@@ -1,5 +1,6 @@
 package parser;
 import java.util.regex.*;
+import java.util.Vector;
 import datatypes.*;
 import utilities.WikiConstants;
 
@@ -58,7 +59,7 @@ public class  WikiContentParser{
 
 
 		//Extract Urls
-		Pattern url_pattern = Pattern.compile("http://[a-z.]*[com|org|net][^ ]*");
+		Pattern url_pattern = Pattern.compile("http://[a-z.]*[com|org|net|co][^ ]*");
 		int num_of_valid_urls=0;
 		for(int i=0;i<ref_index;i++){
 			Matcher url_match = url_pattern.matcher(tag_list[i]);
@@ -115,6 +116,65 @@ public class  WikiContentParser{
 			return_array[i] = bold_and_italic[i];
 
 		return return_array;
+	}
+
+	public StringBuffer getSummaryText(){
+		StringBuffer content = this.getContentText();
+		boolean summary_found = false;
+	
+		try{
+			//Pattern p = Pattern.compile("== [{ASCII}]* ==", Pattern.MULTILINE);
+			Pattern p = Pattern.compile("==[a-zA-Z0-9{}?.,'|\" ]*==[\r\n]", Pattern.MULTILINE);
+			Matcher m = p.matcher(content);
+
+			String matched_phrase = "";
+			if(m.find())
+				matched_phrase = m.group();
+			
+			if(content.indexOf(matched_phrase) != 0)
+				summary_found = true;
+			content.replace( content.indexOf(matched_phrase) , content.length() , "");
+		}catch(IllegalStateException e){
+			System.out.println("Issue with Regular expression matching. Func: getSummaryText");
+		}
+
+		if( summary_found == true){
+			//System.out.println("BEFORE removing the infobox : \n" + content);
+			this.removeExtraStuff(content);	
+			//System.out.println("AFTER removing the infobox : \n" + content +"\n\n\n\n\n");
+		}
+		return content;
+	}
+
+	/*
+		This function will remove unwanted content from the WikiText like '''' , [] , {} 
+	*/
+
+	public void removeExtraStuff(StringBuffer content){
+		while( content.indexOf("'''''") > 0 )
+			content.replace( content.indexOf("'''''"), content.indexOf("'''''") + 5 , "");
+
+		while( content.indexOf("'''") > 0 )
+			content.replace( content.indexOf("'''") , content.indexOf("'''") + 3 , "");
+
+		while( content.indexOf("''") > 0 )
+			content.replace( content.indexOf("''") , content.indexOf("''") + 2 , "");
+
+		//Remove Info box
+		Pattern p = Pattern.compile("[{][{][^}]*", Pattern.MULTILINE);
+		Matcher m = p.matcher(content);
+
+		String matched_phrase = "";
+		Vector<String> matched_list=new Vector<String>();;
+		while(m.find()){
+			matched_phrase = m.group();
+			matched_list.add(matched_phrase);
+		}
+
+		for(int i =0;i<matched_list.size() ; i++){
+			content.replace( content.indexOf(matched_list.get(i)) , content.indexOf(matched_list.get(i)) + matched_list.get(i).length() + 2 , "");
+		}
+
 	}
 
 	/*

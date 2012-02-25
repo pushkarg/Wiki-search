@@ -14,7 +14,8 @@ public class Page {
 	WikiPhrase []bold_and_italic_text;
 	WikiPhrase []bold_text;
 	WikiPhrase []italic_text;
-	//Note - In case you add a new variable here, reset it in the resetPage() function
+	StringBuffer summary_text;
+	//!!!!!!!!Note - In case you add a new variable here, reset it in the resetPage() function!!!!!!!!!!!
 
 	//Meta data -
 	int flag , page_type;
@@ -77,11 +78,17 @@ public class Page {
 			//This is where the parsing function calls go 
 
 			//Extract the Urls from <ref> tags
-			//ref_url_list = content_parser.extractRefTagsFromContent( ref_url_list);
+			ref_url_list = content_parser.extractRefTagsFromContent( ref_url_list);
 		
 			//Extract all the strings in Bold, Italics , Bold & italics
-			//bold_and_italic_text = content_parser.extractBoldAndItalicText(); //Bold & Italics
+			bold_and_italic_text = content_parser.extractBoldAndItalicText(); //Bold & Italics
 			//System.out.println( content_parser.getContentText() );
+
+			//Extract the links from the document
+
+			//Extract the summary text (This should be called after extracting links)
+			summary_text = content_parser.getSummaryText();
+			//System.out.println("\n\n\nSummary : " + summary_text );
 
 
 			raw_text_processed = true;	//Set the content processed flag to true
@@ -123,6 +130,7 @@ public class Page {
 		bold_and_italic_text = new WikiPhrase[0];
 		bold_text = new WikiPhrase[0];
 		italic_text = new WikiPhrase[0];
+		summary_text = new StringBuffer();
 	}
 
 	public int getPageType(){
