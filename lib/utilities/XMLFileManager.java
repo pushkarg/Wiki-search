@@ -144,7 +144,8 @@ public class XMLFileManager {
     	 {
     		 result = itr2.next().toString();
     		 file_count_nonSplitFiles++;
-    		 result = "milestonedump/" +result;
+    		 result =srcFileName +result;
+
     	 }
     	 else
     	 {
