@@ -77,47 +77,98 @@ public class  WikiContentParser{
 		return ref_tags;
 	}
 
-	public WikiPhrase[] extractBoldAndItalicText(){
-		WikiPhrase []bold_and_italic= new WikiPhrase[NUM_OF_BOLD_AND_ITALIC];
-		
-		int phrase_index=0;
+	public Vector <WikiPhrase>  extractBoldAndItalicText(){
+		Vector <WikiPhrase> bold_and_italic= new Vector<WikiPhrase>();
+		WikiPhrase wikiphrase = new WikiPhrase();	
+	
 		//Extract strings with the pattern given below
 		Pattern p = Pattern.compile("'''''[a-zA-Z0-9,.!:?\" ]*'''''", Pattern.MULTILINE);
 		Matcher m = p.matcher(content_text);
 
 		while(m.find() ){
 			String phrase = m.group();
-			int index = getContentTextRaw().indexOf( phrase );
-
+			
 			//Remove the ''''' from the beginning and end.
 			String extracted_phrase = phrase.substring( 5, phrase.length() - 5 );
-			int text_type = WikiConstants.BOLD_AND_ITALICS;
-			bold_and_italic[phrase_index] = new WikiPhrase( extracted_phrase , index , text_type );
-			phrase_index++;
+			
+			wikiphrase.setPhrase(extracted_phrase);
+			wikiphrase.setPhrasePosition(getContentTextRaw().indexOf( phrase ));
+			wikiphrase.setPhraseType(WikiConstants.BOLD_AND_ITALICS);
+			
+			bold_and_italic.add(wikiphrase);
+
 		}
 
-		if(phrase_index ==0){
-			WikiPhrase return_array[] = new WikiPhrase[0];
-			return  return_array;
-		}
+		
+		while( content_text.indexOf("'''''") > 0 )
+			content_text.replace( content_text.indexOf("'''''"), content_text.indexOf("'''''") + 5 , "");
+		
 
-		/*
-		for(int i =0;i<phrase_index;i++){
-			int start_index = getContentText().toString().indexOf("'''''"+bold_and_italic[i] + "'''''");
-			int end_index = start_index + bold_and_italic[i].getPhrase().length() ;
-			System.out.println("start index " + start_index + " , end : " + end_index );
-			//getContentText().replace(start_index , end_index , "" );	
-		}
-		*/
-
-		//The Bold_and_italic array has extra, blank objects. Return only the valid Phrases
-		WikiPhrase return_array[] = new WikiPhrase[ phrase_index];
-		for(int i =0;i<phrase_index;i++)
-			return_array[i] = bold_and_italic[i];
-
-		return return_array;
+		return bold_and_italic;
 	}
 
+	
+	
+	public Vector <WikiPhrase> extractBoldText(){
+		Vector <WikiPhrase> bold= new Vector<WikiPhrase>();
+		WikiPhrase wikiphrase = new WikiPhrase();
+		
+		
+		//Extract strings with the pattern given below
+		Pattern p = Pattern.compile("'''[a-zA-Z0-9,.!:?\" ]*'''", Pattern.MULTILINE);
+		Matcher m = p.matcher(content_text);
+
+		while(m.find() ){
+			String phrase = m.group();
+			
+			//Remove the ''' from the beginning and end.
+			String extracted_phrase = phrase.substring( 3, phrase.length() - 3 );
+			
+			wikiphrase.setPhrase(extracted_phrase);
+			wikiphrase.setPhrasePosition(getContentTextRaw().indexOf( phrase ));
+			wikiphrase.setPhraseType(WikiConstants.BOLD);
+			
+			bold.add(wikiphrase);
+		}		
+		while( content_text.indexOf("'''") > 0 )
+			content_text.replace( content_text.indexOf("'''") , content_text.indexOf("'''") + 3 , "");
+		
+		return bold;
+	}
+
+	
+	public Vector <WikiPhrase> extractItalicText(){
+		Vector <WikiPhrase> italic = new Vector<WikiPhrase>();
+		WikiPhrase wikiphrase = new WikiPhrase();
+		
+		
+		//Extract strings with the pattern given below
+		Pattern p = Pattern.compile("''[a-zA-Z0-9,.!:?\" ]*''", Pattern.MULTILINE);
+		Matcher m = p.matcher(content_text);
+
+		while(m.find() ){
+			String phrase = m.group();
+			int index = getContentTextRaw().indexOf( phrase );
+			String extracted_phrase;
+			
+			//Remove the '' from the beginning and end.
+			extracted_phrase = phrase.substring( 2, phrase.length() - 2 );
+			
+				
+			wikiphrase.setPhrase(extracted_phrase);
+			wikiphrase.setPhrasePosition(index); 
+			wikiphrase.setPhraseType(WikiConstants.ITALICS);
+			
+			italic.add(wikiphrase);
+		}		
+		while( content_text.indexOf("''") > 0 )
+			content_text.replace( content_text.indexOf("''") , content_text.indexOf("''") + 2 , "");
+		
+		return italic;
+	}
+
+	
+	
 	public StringBuffer getSummaryText(){
 		StringBuffer content = this.getContentText();
 		boolean summary_found = false;
@@ -176,12 +227,4 @@ public class  WikiContentParser{
 		}
 
 	}
-
-	/*
-	public WikiPhrase[] extractBoldText(){
-	}
-
-	public WikiPhrase[] extractItalicText(){
-	}
-	*/
 }
