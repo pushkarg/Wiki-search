@@ -175,7 +175,8 @@ public class  WikiContentParser{
 	
 		try{
 			//Pattern p = Pattern.compile("== [{ASCII}]* ==", Pattern.MULTILINE);
-			Pattern p = Pattern.compile("==[a-zA-Z0-9{}?.,'|\" ]*==[\r\n]", Pattern.MULTILINE);
+			//Pattern p = Pattern.compile("==[a-zA-Z0-9{}?.,'|\" ]*==[\r\n]", Pattern.MULTILINE);
+			Pattern p = Pattern.compile("=?==[^=]*===?[\r\n]", Pattern.MULTILINE);
 			Matcher m = p.matcher(content);
 
 			String matched_phrase = "";
@@ -221,9 +222,39 @@ public class  WikiContentParser{
 			matched_phrase = m.group();
 			matched_list.add(matched_phrase);
 		}
+		//matched_list vector has the list of info boxes
 
 		for(int i =0;i<matched_list.size() ; i++){
-			content.replace( content.indexOf(matched_list.get(i)) , content.indexOf(matched_list.get(i)) + matched_list.get(i).length() + 2 , "");
+			int indexOfMatchedBracket=content.indexOf(matched_list.get(i) );	
+			
+			int countOfMatchedStartingBracket = 1;
+			indexOfMatchedBracket+=2;//Skip over the 1st set of open brackets 
+			while(countOfMatchedStartingBracket!=0 && indexOfMatchedBracket<content.length()){
+				if(content.charAt(indexOfMatchedBracket) == '{' && content.charAt(indexOfMatchedBracket+1) == '{')
+					countOfMatchedStartingBracket++;
+				if(content.charAt(indexOfMatchedBracket) == '}' && content.charAt(indexOfMatchedBracket+1) == '}')
+					countOfMatchedStartingBracket--;
+				indexOfMatchedBracket++;	
+			}
+			matched_list.set(i , content.substring( content.indexOf(matched_list.get(i)) , indexOfMatchedBracket+1  ) );
+		}
+
+		for(int i =0;i<matched_list.size() ;i++){
+			if( content.indexOf(matched_list.get(i)) != -1){
+				//Replace only if found. The matched pattern in the current iteration could have been a sub pattern in the previous iteration, which might have already been replaced.
+				//System.out.println("Replaced : " + content.substring( content.indexOf(matched_list.get(i)) , content.indexOf(matched_list.get(i)) + matched_list.get(i).length() ));
+				content.replace( content.indexOf(matched_list.get(i)) , content.indexOf(matched_list.get(i)) + matched_list.get(i).length() , "");
+			}
+		}
+		//Info box and patterns with {{ }} removed 
+
+
+		//Remove <ref> & </ref> tags
+		while(content.indexOf("<ref>")!= -1){
+			content.replace( content.indexOf("<ref>") , content.indexOf("<ref>") + 5 , "");
+		}
+		while(content.indexOf("</ref>")!= -1){
+			content.replace( content.indexOf("</ref>") , content.indexOf("</ref>") + 6 , "");
 		}
 
 	}
