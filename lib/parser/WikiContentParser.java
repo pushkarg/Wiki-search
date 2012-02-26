@@ -1,5 +1,6 @@
 package parser;
 import java.util.regex.*;
+import java.util.Iterator;
 import java.util.Vector;
 import datatypes.*;
 import utilities.WikiConstants;
@@ -167,6 +168,42 @@ public class  WikiContentParser{
 		return italic;
 	}
 
+	
+	public WikiLinks ExtractOutLinks()
+	{
+		WikiLinks linkObj = new WikiLinks();
+		//Vector<WikiLinks> linkArray = new Vector<WikiLinks>();// to store all
+																// the values
+		//linkArray.add(linkObj);
+		// Extract the string with the pattern given below, [[ ]]
+		Pattern p = Pattern.compile("\\[\\[(.*?)\\]\\]");
+
+		Matcher matcher = p.matcher(content_text.toString());
+		while (matcher.find()) 
+		{
+
+			String groupStr = matcher.group(1);
+
+			boolean  categoryFlag = groupStr.startsWith("Category:");
+			if(categoryFlag)
+			{
+				linkObj.AddCategoryLink(groupStr);
+				System.out.println("CategoryLink:" + groupStr);
+			}
+			else
+			{
+				linkObj.AddLinkString(groupStr);
+				System.out.println("Link:"+groupStr);
+			}
+			
+			/*
+			 * for(int i=0; i<matcher.groupCount(); i++) { String groupStr =
+			 * matcher.group(i); System.out.println(groupStr); }
+			 */
+		};
+		return linkObj;
+	}
+	
 	
 	
 	public StringBuffer getSummaryText(){
