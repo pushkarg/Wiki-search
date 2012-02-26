@@ -1,6 +1,5 @@
 package parser;
 import java.util.regex.*;
-import java.util.Iterator;
 import java.util.Vector;
 import datatypes.*;
 import utilities.WikiConstants;
@@ -15,7 +14,7 @@ public class  WikiContentParser{
 	final int NUM_OF_BOLD_AND_ITALIC = 500;
 
 	public WikiContentParser(StringBuffer text){
-		content_text = text;
+		content_text = new StringBuffer(text);
 		content_raw = text.toString();
 	}
 
@@ -34,48 +33,45 @@ public class  WikiContentParser{
 	/*
 		This extracts the <ref></ref> tags from the content and adds them to the ref_tags array
 	*/
-	public WikiUrl[] extractRefTagsFromContent(WikiUrl []ref_tags){
-		String tag_list[] = new String[NUM_OF_REF_URLS];	
+	public Vector<WikiUrl>  extractRefTagsFromContent(Vector <WikiUrl> input){
+		Vector <String> tag_list = new Vector <String>();	
 		int current_string_count = 0;
 		boolean ref_tags_exist = true;
-		int ref_index = 0;
-		WikiUrl []temp_url_list = new WikiUrl[NUM_OF_REF_URLS];
+		
+		Vector <WikiUrl> temp_url_list = new Vector <WikiUrl> ();
 
 		//Extract strings with the pattern given below
 		Pattern p = Pattern.compile("<ref[^<]*</ref>", Pattern.MULTILINE);
 		Matcher m = p.matcher(content_text);
 
 		while(m.find() ){
-			tag_list[ref_index] = new String( m.group() );
-			ref_index++;
+			tag_list.add(m.group());
 		}
 
-		temp_url_list=new WikiUrl[ref_index];
+		//temp_url_list=new WikiUrl[ref_index];
 
 		//Replace the <ref> tags with blank strings in the main string, once they have been extracted
-		for(int i=0;i<temp_url_list.length ; i++){
-			 int start_index = content_text.indexOf(tag_list[i].toString());
-			 content_text.replace(start_index , start_index + tag_list[i].length() , "");
+		for(int i=0;i<tag_list.size() ; i++){
+			 int start_index = content_text.indexOf(tag_list.elementAt(i));
+			 content_text.replace(start_index , start_index + tag_list.elementAt(i).length() , "");
 		}
 
 
 		//Extract Urls
 		Pattern url_pattern = Pattern.compile("http://[a-z.]*[com|org|net|co][^ ]*");
-		int num_of_valid_urls=0;
-		for(int i=0;i<ref_index;i++){
-			Matcher url_match = url_pattern.matcher(tag_list[i]);
-			if(url_match.find()){
-				temp_url_list[num_of_valid_urls] = new WikiUrl(url_match.group(0));
-				num_of_valid_urls++;
+		WikiUrl wiki;
+		for(int i=0;i<tag_list.size() ;i++){
+			Matcher url_match = url_pattern.matcher(tag_list.elementAt(i));
+			if(url_match.find()){	
+				wiki = new WikiUrl(url_match.group(0));
+				temp_url_list.add(wiki);
+				
 				//Extract and add the Url title if required later !!
 			}
 		}
 
-		ref_tags = new WikiUrl[num_of_valid_urls];
-		for(int i=0;i<ref_tags.length;i++)
-			ref_tags[i] = temp_url_list[i];
 
-		return ref_tags;
+		return temp_url_list;
 	}
 
 	public Vector <WikiPhrase>  extractBoldAndItalicText(){
@@ -168,46 +164,44 @@ public class  WikiContentParser{
 		return italic;
 	}
 
-	
-	public WikiLinks ExtractOutLinks()
-	{
-		WikiLinks linkObj = new WikiLinks();
-		//Vector<WikiLinks> linkArray = new Vector<WikiLinks>();// to store all
-																// the values
-		//linkArray.add(linkObj);
-		// Extract the string with the pattern given below, [[ ]]
-		Pattern p = Pattern.compile("\\[\\[(.*?)\\]\\]");
+    public WikiLinks ExtractOutLinks()
+    {
+            WikiLinks linkObj = new WikiLinks();
+            //Vector<WikiLinks> linkArray = new Vector<WikiLinks>();// to store all
+                                                                                                                            // the values
+            //linkArray.add(linkObj);
+            // Extract the string with the pattern given below, [[ ]]
+            Pattern p = Pattern.compile("\\[\\[(.*?)\\]\\]");
 
-		Matcher matcher = p.matcher(content_text.toString());
-		while (matcher.find()) 
-		{
+            Matcher matcher = p.matcher(content_text.toString());
+            while (matcher.find())
+            {
 
-			String groupStr = matcher.group(1);
+                    String groupStr = matcher.group(1);
 
-			boolean  categoryFlag = groupStr.startsWith("Category:");
-			if(categoryFlag)
-			{
-				linkObj.AddCategoryLink(groupStr);
-				System.out.println("CategoryLink:" + groupStr);
-			}
-			else
-			{
-				linkObj.AddLinkString(groupStr);
-				System.out.println("Link:"+groupStr);
-			}
-			
-			/*
-			 * for(int i=0; i<matcher.groupCount(); i++) { String groupStr =
-			 * matcher.group(i); System.out.println(groupStr); }
-			 */
-		};
-		return linkObj;
-	}
-	
-	
+                    boolean  categoryFlag = groupStr.startsWith("Category:");
+                    if(categoryFlag)
+                    {
+                            linkObj.AddCategoryLink(groupStr);
+                            System.out.println("CategoryLink:" + groupStr);
+                    }
+                    else
+                    {
+                            linkObj.AddLinkString(groupStr);
+                            System.out.println("Link:"+groupStr);
+                    }
+
+                    /*
+                     * for(int i=0; i<matcher.groupCount(); i++) { String groupStr =
+                     * matcher.group(i); System.out.println(groupStr); }
+                     */
+            };
+            return linkObj;
+    }
+
 	
 	public StringBuffer getSummaryText(){
-		StringBuffer content = this.getContentText();
+		StringBuffer content = new StringBuffer(this.getContentText());
 		boolean summary_found = false;
 	
 		try{

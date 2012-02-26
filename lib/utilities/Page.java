@@ -12,14 +12,14 @@ public class Page {
 	StringBuffer page_title;
 	StringBuffer content_raw,content_processed;
 	StringBuffer timestamp;
-	WikiUrl []ref_url_list;
+	Vector <WikiUrl> ref_url_list;
 	Vector <WikiPhrase> bold_and_italic_text;
 	Vector <WikiPhrase> bold_text;
 	Vector <WikiPhrase> italic_text;
 	StringBuffer summary_text;
 	Vector<WikiLinks> wikiLinkvctr = null;
-	//!!!!!!!!Note - In case you add a new variable here, reset it in the resetPage() function!!!!!!!!!!!
 
+	//!!!!!!!!Note - In case you add a new variable here, reset it in the resetPage() function!!!!!!!!!!!
 
 	//Meta data -
 	int flag , page_type;
@@ -30,7 +30,7 @@ public class Page {
 		redirect = false;
 		page_type = WikiConstants.UNKNOWN_PAGE;
 		resetContentProcessedFlag();
-		ref_url_list = new WikiUrl[0];
+		ref_url_list = null;
 		wikiLinkvctr = new Vector<WikiLinks>();
 	}
 
@@ -88,28 +88,34 @@ public class Page {
 			//Extract all the strings in Bold, Italics , Bold & italics
 			bold_and_italic_text = content_parser.extractBoldAndItalicText(); //Bold & Italics
 			//System.out.println( content_parser.getContentText() );
-			
+
 			// the order of execution of bold_italic, bold and italic are important
 			bold_text = content_parser.extractBoldText();
 			italic_text = content_parser.extractItalicText();
 			
-						
+					
 			//Extract the links from the document
-
+			try {
 			//Extract the summary text (This should be called after extracting links)
 			summary_text = content_parser.getSummaryText();
 			//System.out.println("\n\n\nSummary : " + summary_text );
-			
-  
-
-			// The return type of the function is WikiLinks.
-			// Creating a vector of objects so that we have the list with respect to each Page.
-			WikiLinks localObj;
+			}
+			catch(Exception e){
+				System.out.println("Exception found in get content");
+				System.exit(0);
+			}
+			try {
+			WikiLinks localObj;                      
 			localObj = content_parser.ExtractOutLinks();
-			wikiLinkvctr.add(localObj);
-			
+		  	wikiLinkvctr.add(localObj);   
+			}
+			catch(Exception e2){
+				System.out.println("Exception found in get content - WikiLinks");
+				System.exit(0);
+			}
 			raw_text_processed = true;	//Set the content processed flag to true
-			content_processed = content_raw;//Remove this after the processing has been done.
+			content_processed = content_parser.getContentText(); // the content_raw is processed by ContentParser 
+		//	content_processed = content_raw;
 		}
 		return content_processed;
 	}
@@ -122,23 +128,18 @@ public class Page {
 		this.content_raw = content;
 	}
 
-	public WikiUrl[] getRefUrlsList(){
+	public Vector<WikiUrl> getRefUrlsList(){
 		return ref_url_list;
 	}
 
 	public WikiUrl getRefUrl(int num){
-		return ref_url_list[num];
+		return ref_url_list.elementAt(num);
 	}
 
 	public int getNumRefUrls(){
-		return ref_url_list.length;
+		return ref_url_list.size();
 	}
-
-	// WikiLinks Info Returned
-	public  Vector<WikiLinks> getWikiLinkInfoObj()
-	{
-		return wikiLinkvctr;
-	}
+		
 
 	public void resetPage(){
 	//This function can be used to set all the properties of the Page object to blank. This is useful when the same Page object is used for different Wiki articles, without instantiating new Objs
@@ -148,11 +149,80 @@ public class Page {
 		timestamp=new StringBuffer();
 		flag = 0;
 		resetContentProcessedFlag();
-		ref_url_list = new WikiUrl[0];
+		ref_url_list = null;
 		bold_and_italic_text = null;
 		bold_text = null;
 		italic_text = null;
 		summary_text = new StringBuffer();
+		wikiLinkvctr = null;
+	}
+
+	public StringBuffer getPage_title() {
+		return page_title;
+	}
+
+	public void setPage_title(StringBuffer page_title) {
+		this.page_title = page_title;
+	}
+
+	public StringBuffer getContent_processed() {
+		return content_processed;
+	}
+
+	public void setContent_processed(StringBuffer content_processed) {
+		this.content_processed = content_processed;
+	}
+
+	public Vector <WikiUrl> getRef_url_list() {
+		return ref_url_list;
+	}
+
+	public void setRef_url_list(Vector <WikiUrl> ref_url_list) {
+		this.ref_url_list = ref_url_list;
+	}
+
+	public Vector<WikiPhrase> getBold_and_italic_text() {
+		return bold_and_italic_text;
+	}
+
+	public void setBold_and_italic_text(Vector<WikiPhrase> bold_and_italic_text) {
+		this.bold_and_italic_text = bold_and_italic_text;
+	}
+
+	public Vector<WikiPhrase> getBold_text() {
+		return bold_text;
+	}
+
+	public void setBold_text(Vector<WikiPhrase> bold_text) {
+		this.bold_text = bold_text;
+	}
+
+	public Vector<WikiPhrase> getItalic_text() {
+		return italic_text;
+	}
+
+	public void setItalic_text(Vector<WikiPhrase> italic_text) {
+		this.italic_text = italic_text;
+	}
+
+	public StringBuffer getSummary_text() {
+		return summary_text;
+	}
+
+	public void setSummary_text(StringBuffer summary_text) {
+		this.summary_text = summary_text;
+	}
+
+	public int getPage_type() {
+		return page_type;
+	}
+
+	public void setPage_type(int page_type) {
+		this.page_type = page_type;
+	}
+
+	public Boolean getRedirect() {
+		return redirect;
 	}
 
 	public int getPageType(){

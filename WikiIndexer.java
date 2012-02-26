@@ -11,6 +11,8 @@ import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.search.DefaultSimilarity;
+import org.apache.lucene.search.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
@@ -24,7 +26,23 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
 
+/*
+class MySim extends DefaultSimilarity {
 
+
+	private static final long serialVersionUID = 1L;
+
+public float computeNorm(String fieldName, int numTerms) {
+return (float)(1.0);
+}
+
+public float queryNorm(String fieldName, int numTerms) {
+return (float)(1.0);
+}
+
+}
+
+*/
 public class WikiIndexer{
 
 	private IndexWriter writer;
@@ -35,11 +53,14 @@ public class WikiIndexer{
 	final int NUM_OF_PAGES = 10;
 	public Page page;
 
+	
 	private void initializeIndexWriter() throws IOException {
 		Directory dir ;
 		dir = FSDirectory.open(new File(getIndexDirectory()) );
 	    Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
 	    IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_31, analyzer);
+	   // Similarity sim = new MySim();
+	   // writer.setSimilarity(sim);
 		writer = new IndexWriter( dir, iwc);
 	}
 
@@ -88,14 +109,53 @@ public class WikiIndexer{
 
 		Field field2 = new Field("title" ,  page.getTitle().toString() ,Field.Store.NO, Field.Index.ANALYZED);
 		indexDoc.add(field2);
-		//field2.setBoost(1.5F); // The title needs to have a higher weight than other fields.
+		field2.setBoost(1.5F); // The title needs to have a higher weight than other fields.
 
 		Field field3 = new Field("Exacttitle" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.NOT_ANALYZED);
 		indexDoc.add(field3);
+		field3.setBoost(6F);
+/*		
+		Field field4 = new Field("Summary" ,  page.getSummary_text().toString() ,Field.Store.NO, Field.Index.ANALYZED);
+		indexDoc.add(field4);
+		//field4.setBoost(1.5F);
 		
-		//if( page.getContent().toString().contains("film") || page.getContent().toString().contains("films")){
-		//	indexDoc.setBoost(2F);
-		//}
+		
+		Field field5;
+		for(int i=0;i<page.getBold_text().size();i++){
+			field5 = new Field("Bold" ,  page.getBold_text().elementAt(i).getPhrase() ,Field.Store.NO, Field.Index.ANALYZED);
+			indexDoc.add(field5);
+		//	field5.setBoost(1.2F);
+		}
+		
+		Field field6;
+		for(int i=0;i<page.getBold_and_italic_text().size();i++){
+			field6 = new Field("BoldAndItalic" ,  page.getBold_and_italic_text().elementAt(i).getPhrase() ,Field.Store.NO, Field.Index.ANALYZED);
+			indexDoc.add(field6);
+		//	field6.setBoost(1.5F);
+		}
+		
+		Field field7;
+		for(int i=0;i<page.getItalic_text().size();i++){
+			field7 = new Field("Italic" ,  page.getItalic_text().elementAt(i).getPhrase() ,Field.Store.NO, Field.Index.ANALYZED);
+			indexDoc.add(field7);
+		//	field7.setBoost(1.2F);
+		}
+		*/
+		if(page.getNumRefUrls()>100)
+			indexDoc.setBoost(2F);
+		else if(page.getNumRefUrls()>75)
+			indexDoc.setBoost(1.8F);
+		else if(page.getNumRefUrls()>50)
+			indexDoc.setBoost(1.7F);
+		else if (page.getNumRefUrls()>25)
+			indexDoc.setBoost(1.5F);
+		else if (page.getNumRefUrls()>5)
+			indexDoc.setBoost(1.2F);
+		
+		//System.out.println(page.getNumRefUrls()+"Gautham");
+		if( page.getTitle().toString().contains("Category:")){
+			indexDoc.setBoost(0.8F);
+		}
 		
 		return indexDoc;
 	}
