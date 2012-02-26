@@ -12,12 +12,13 @@ public class Page {
 	StringBuffer page_title;
 	StringBuffer content_raw,content_processed;
 	StringBuffer timestamp;
-	WikiUrl []ref_url_list;
 	Vector <WikiPhrase> bold_and_italic_text;
 	Vector <WikiPhrase> bold_text;
 	Vector <WikiPhrase> italic_text;
 	StringBuffer summary_text;
+	Vector<WikiLinks> wikiLinkvctr = null
 	//!!!!!!!!Note - In case you add a new variable here, reset it in the resetPage() function!!!!!!!!!!!
+
 
 	//Meta data -
 	int flag , page_type;
@@ -29,6 +30,7 @@ public class Page {
 		page_type = WikiConstants.UNKNOWN_PAGE;
 		resetContentProcessedFlag();
 		ref_url_list = new WikiUrl[0];
+		wikiLinkvctr = new Vector<WikiLinks>();
 	}
 
 	//This is a function which can be used to check if the String content has been processed or not. It will be used 
@@ -85,7 +87,7 @@ public class Page {
 			//Extract all the strings in Bold, Italics , Bold & italics
 			bold_and_italic_text = content_parser.extractBoldAndItalicText(); //Bold & Italics
 			//System.out.println( content_parser.getContentText() );
-
+			
 			// the order of execution of bold_italic, bold and italic are important
 			bold_text = content_parser.extractBoldText();
 			italic_text = content_parser.extractItalicText();
@@ -96,7 +98,15 @@ public class Page {
 			//Extract the summary text (This should be called after extracting links)
 			summary_text = content_parser.getSummaryText();
 			//System.out.println("\n\n\nSummary : " + summary_text );
+			
+  
 
+			// The return type of the function is WikiLinks.
+			// Creating a vector of objects so that we have the list with respect to each Page.
+			WikiLinks localObj;
+			localObj = content_parser.ExtractOutLinks();
+			wikiLinkvctr.add(localObj);
+			
 			raw_text_processed = true;	//Set the content processed flag to true
 			content_processed = content_raw;//Remove this after the processing has been done.
 		}
@@ -122,7 +132,12 @@ public class Page {
 	public int getNumRefUrls(){
 		return ref_url_list.length;
 	}
-		
+
+	// WikiLinks Info Returned
+	public  Vector<WikiLinks> getWikiLinkInfoObj()
+	{
+		return wikiLinkvctr;
+	}
 
 	public void resetPage(){
 	//This function can be used to set all the properties of the Page object to blank. This is useful when the same Page object is used for different Wiki articles, without instantiating new Objs
