@@ -12,11 +12,12 @@ public class Page {
 	StringBuffer page_title;
 	StringBuffer content_raw,content_processed;
 	StringBuffer timestamp;
+	WikiUrl []ref_url_list;
 	Vector <WikiPhrase> bold_and_italic_text;
 	Vector <WikiPhrase> bold_text;
 	Vector <WikiPhrase> italic_text;
 	StringBuffer summary_text;
-	Vector<WikiLinks> wikiLinkvctr = null
+	Vector<WikiLinks> wikiLinkvctr = null;
 	//!!!!!!!!Note - In case you add a new variable here, reset it in the resetPage() function!!!!!!!!!!!
 
 
