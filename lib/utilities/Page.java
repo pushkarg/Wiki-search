@@ -104,18 +104,16 @@ public class Page {
 				System.out.println("Exception found in get content");
 				System.exit(0);
 			}
-			try {
-			WikiLinks localObj;                      
-			localObj = content_parser.ExtractOutLinks();
-		  	wikiLinkvctr.add(localObj);   
-			}
-			catch(Exception e2){
-				System.out.println("Exception found in get content - WikiLinks");
-				System.exit(0);
-			}
-			raw_text_processed = true;	//Set the content processed flag to true
-			content_processed = content_parser.getContentText(); // the content_raw is processed by ContentParser 
-		//	content_processed = content_raw;
+
+			WikiLinks localObj = new WikiLinks();
+			content_parser.ExtractOutLinks(localObj);
+			localObj.setTitleToLink(this.page_title.toString());
+			// After this step, the WikiLink obj has both the Pagetitle and its corresponding links. We can create hashmap where ever we want 
+			wikiLinkvctr.add(localObj);
+
+			raw_text_processed = true; // Set the content processed flag to true
+			content_processed = content_parser.getContentText(); // the content_raw is processed by ContentParser
+			// content_processed = content_raw;
 		}
 		return content_processed;
 	}
@@ -154,7 +152,7 @@ public class Page {
 		bold_text = null;
 		italic_text = null;
 		summary_text = new StringBuffer();
-		wikiLinkvctr = null;
+		//wikiLinkvctr = null; // no need to nullif this value, all objects of WikiLink are stored in it. 
 	}
 
 	public StringBuffer getPage_title() {
