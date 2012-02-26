@@ -6,6 +6,17 @@ public class WikiLinks{
 	Vector<String> outPutLink = new Vector<String>();
 	Vector<String> CategoryLink = new Vector<String>();
 	String titleOfThePage;
+	
+	public void setTitleToLink(String titleBuffer)
+	{
+		titleOfThePage = titleBuffer;
+	}
+	
+	public String getTitleToLink()
+	{
+		return titleOfThePage;
+	}
+	
 	public void AddLinkString(String strBuffer)
 	{
 		outPutLink.add(strBuffer);
