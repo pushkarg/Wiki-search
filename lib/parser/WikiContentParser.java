@@ -164,20 +164,17 @@ public class  WikiContentParser{
 		return italic;
 	}
 
-    public WikiLinks ExtractOutLinks()
+    public void ExtractOutLinks(WikiLinks linkObj)
     {
-            WikiLinks linkObj = new WikiLinks();
-            //Vector<WikiLinks> linkArray = new Vector<WikiLinks>();// to store all
-                                                                                                                            // the values
-            //linkArray.add(linkObj);
-            // Extract the string with the pattern given below, [[ ]]
-            Pattern p = Pattern.compile("\\[\\[(.*?)\\]\\]");
+            Pattern p = Pattern.compile("\\[\\[(.*?)\\]\\]", Pattern.MULTILINE|Pattern.DOTALL);
 
             Matcher matcher = p.matcher(content_text.toString());
             while (matcher.find())
             {
 
                     String groupStr = matcher.group(1);
+                    if(groupStr != null)
+                    {
 
                     boolean  categoryFlag = groupStr.startsWith("Category:");
                     if(categoryFlag)
@@ -190,13 +187,9 @@ public class  WikiContentParser{
                             linkObj.AddLinkString(groupStr);
                             System.out.println("Link:"+groupStr);
                     }
+                    }
 
-                    /*
-                     * for(int i=0; i<matcher.groupCount(); i++) { String groupStr =
-                     * matcher.group(i); System.out.println(groupStr); }
-                     */
             };
-            return linkObj;
     }
 
 	
