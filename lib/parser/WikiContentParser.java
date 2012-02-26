@@ -236,13 +236,22 @@ public class  WikiContentParser{
 					countOfMatchedStartingBracket--;
 				indexOfMatchedBracket++;	
 			}
-			matched_list.set(i , content.substring( content.indexOf(matched_list.get(i)) , indexOfMatchedBracket+1  ) );
+			try{
+
+				if(indexOfMatchedBracket!=content.length())
+					matched_list.set(i , content.substring( content.indexOf(matched_list.get(i)) , indexOfMatchedBracket+1  ) );
+				else
+					matched_list.removeElementAt(i);
+			}catch(StringIndexOutOfBoundsException e){
+				System.out.println("COMIN HERE !! ");
+				//System.out.println("Content : " + content + " indexof ; " +content.indexOf(matched_list.get(i))  + " , length : " + content.length() + " Index of matched bracket : " + indexOfMatchedBracket + " , Also matched phrase : " + matched_list.get(i)  );
+				System.exit(0);	
+			}
 		}
 
 		for(int i =0;i<matched_list.size() ;i++){
 			if( content.indexOf(matched_list.get(i)) != -1){
 				//Replace only if found. The matched pattern in the current iteration could have been a sub pattern in the previous iteration, which might have already been replaced.
-				//System.out.println("Replaced : " + content.substring( content.indexOf(matched_list.get(i)) , content.indexOf(matched_list.get(i)) + matched_list.get(i).length() ));
 				content.replace( content.indexOf(matched_list.get(i)) , content.indexOf(matched_list.get(i)) + matched_list.get(i).length() , "");
 			}
 		}
