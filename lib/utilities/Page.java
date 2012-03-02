@@ -152,6 +152,7 @@ public class Page {
 		bold_text = null;
 		italic_text = null;
 		summary_text = new StringBuffer();
+		wikiLinkvctr.clear();
 		//wikiLinkvctr = null; // no need to nullif this value, all objects of WikiLink are stored in it. 
 	}
 

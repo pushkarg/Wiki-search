@@ -1,8 +1,10 @@
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.queryParser.MultiFieldQueryParser;
 import org.apache.lucene.queryParser.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
@@ -10,6 +12,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
+import org.apache.lucene.analysis.en.*;
 
 
 import java.io.BufferedReader;
@@ -25,14 +28,17 @@ public class WikiSearcher{
 
 	public void searchFiles(String queryStr) throws Exception{
 		String indexDir = "Folder_Index";
-    	String field = "contents";
+    	String[] field = {"contents","title","Exacttitle","Bold","BoldAndItalic","Summary","Italic"};
 
     	IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexDir)));
     	IndexSearcher searcher = new IndexSearcher(reader);
-
-    	Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
-    	QueryParser parser = new QueryParser(Version.LUCENE_31, field, analyzer);
-		
+    	
+    	
+    	//Analyzer analyzer = new SnowballAnalyzer(Version.LUCENE_35,"English");
+    	Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
+    	//QueryParser parser = new QueryParser(Version.LUCENE_35, field, analyzer);
+    	
+    	MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_35, field, analyzer);
 		//System.out.println("Query being searched : "+queryStr);
 		Query query = parser.parse(queryStr);
 		TopDocs hits = searcher.search(query, 30);
@@ -50,6 +56,7 @@ public class WikiSearcher{
 	public static void main(String args[]) throws Exception{
 	  	//System.out.println("Enter the query : ");
     	//BufferedReader in =  new BufferedReader(new InputStreamReader(System.in, "UTF-8"));
+		
 		//String query = in.readLine();
 		String query = args[0];
 

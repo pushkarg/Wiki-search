@@ -16,6 +16,8 @@ import org.apache.lucene.search.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
+import org.apache.lucene.analysis.snowball.*;
+
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -26,23 +28,9 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Date;
 
-/*
-class MySim extends DefaultSimilarity {
 
 
-	private static final long serialVersionUID = 1L;
 
-public float computeNorm(String fieldName, int numTerms) {
-return (float)(1.0);
-}
-
-public float queryNorm(String fieldName, int numTerms) {
-return (float)(1.0);
-}
-
-}
-
-*/
 public class WikiIndexer{
 
 	private IndexWriter writer;
@@ -57,8 +45,9 @@ public class WikiIndexer{
 	private void initializeIndexWriter() throws IOException {
 		Directory dir ;
 		dir = FSDirectory.open(new File(getIndexDirectory()) );
-	    Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_31);
-	    IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_31, analyzer);
+	    //Analyzer analyzer = new SnowballAnalyzer(Version.LUCENE_35,"English");
+		Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
+	    IndexWriterConfig iwc = new IndexWriterConfig(Version.LUCENE_35, analyzer);
 	   // Similarity sim = new MySim();
 	   // writer.setSimilarity(sim);
 		writer = new IndexWriter( dir, iwc);
@@ -106,6 +95,7 @@ public class WikiIndexer{
 	public Document addFields(Document indexDoc , Page page){
 		Field field1 = new Field("contents", page.getContent().toString() , Field.Store.NO, Field.Index.ANALYZED);
 		indexDoc.add(field1);
+		//field1.setBoost(0.87F);
 
 		Field field2 = new Field("title" ,  page.getTitle().toString() ,Field.Store.NO, Field.Index.ANALYZED);
 		indexDoc.add(field2);
@@ -114,12 +104,12 @@ public class WikiIndexer{
 		Field field3 = new Field("Exacttitle" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.NOT_ANALYZED);
 		indexDoc.add(field3);
 		field3.setBoost(6F);
-/*		
-		Field field4 = new Field("Summary" ,  page.getSummary_text().toString() ,Field.Store.NO, Field.Index.ANALYZED);
-		indexDoc.add(field4);
+		
+		//Field field4 = new Field("Summary" ,  page.getSummary_text().toString() ,Field.Store.NO, Field.Index.ANALYZED);
+		//indexDoc.add(field4);
 		//field4.setBoost(1.5F);
 		
-		
+	/*	
 		Field field5;
 		for(int i=0;i<page.getBold_text().size();i++){
 			field5 = new Field("Bold" ,  page.getBold_text().elementAt(i).getPhrase() ,Field.Store.NO, Field.Index.ANALYZED);
@@ -134,6 +124,7 @@ public class WikiIndexer{
 		//	field6.setBoost(1.5F);
 		}
 		
+		/*
 		Field field7;
 		for(int i=0;i<page.getItalic_text().size();i++){
 			field7 = new Field("Italic" ,  page.getItalic_text().elementAt(i).getPhrase() ,Field.Store.NO, Field.Index.ANALYZED);
@@ -141,7 +132,9 @@ public class WikiIndexer{
 		//	field7.setBoost(1.2F);
 		}
 		*/
-		if(page.getNumRefUrls()>100)
+		if(page.getNumRefUrls()>125)
+			indexDoc.setBoost(2.2F);
+		else if(page.getNumRefUrls()>100)
 			indexDoc.setBoost(2F);
 		else if(page.getNumRefUrls()>75)
 			indexDoc.setBoost(1.8F);
@@ -151,15 +144,17 @@ public class WikiIndexer{
 			indexDoc.setBoost(1.5F);
 		else if (page.getNumRefUrls()>5)
 			indexDoc.setBoost(1.2F);
-		
+
+
 		//System.out.println(page.getNumRefUrls()+"Gautham");
-		if( page.getTitle().toString().contains("Category:")){
-			indexDoc.setBoost(0.8F);
-		}
+		if( page.getTitle().toString().contains("Category:") || page.getTitle().toString().contains("User:") || page.getTitle().toString().contains("File:"))
+			indexDoc.setBoost(0.82F);
+		
+		
 		
 		return indexDoc;
 	}
-
+ 
 	public int indexFiles(Date start) throws Exception{
        	
 		int i=0;
