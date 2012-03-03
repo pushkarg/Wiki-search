@@ -132,6 +132,9 @@ public class WikiIndexer{
 		//	field7.setBoost(1.2F);
 		}
 		*/
+
+		// CITATIONS ANALYSIS
+		
 		if(page.getNumRefUrls()>125)
 			indexDoc.setBoost(2.2F);
 		else if(page.getNumRefUrls()>100)
@@ -145,11 +148,40 @@ public class WikiIndexer{
 		else if (page.getNumRefUrls()>5)
 			indexDoc.setBoost(1.2F);
 
-
+		// CATEGORY DEPRECIATION
+		
 		//System.out.println(page.getNumRefUrls()+"Gautham");
 		if( page.getTitle().toString().contains("Category:") || page.getTitle().toString().contains("User:") || page.getTitle().toString().contains("File:"))
 			indexDoc.setBoost(0.82F);
+
+		// OUT LINK ANALYSIS
 		
+		int out_link_count = page.getWikiLinkvctr().getOutPutLink().size();
+
+	/*	if(out_link_count>180)
+			indexDoc.setBoost(3.2F);
+		else */if(out_link_count>150)
+			indexDoc.setBoost(3.25F);
+		else if(out_link_count>100)
+			indexDoc.setBoost(2.5F);
+		else if(out_link_count>70)
+			indexDoc.setBoost(2F);
+		/*else if(out_link_count>50)
+			indexDoc.setBoost(1.2F);
+		else if(out_link_count>30)
+			indexDoc.setBoost(1.6F);
+		else if(out_link_count>10)
+			indexDoc.setBoost(1.2F); */
+		
+		// CATEGORY LINKS
+		
+		/*Field field8;
+		for(int i=0;i<page.getWikiLinkvctr().getCategoryLink().size();i++){
+			//System.out.println(page.getWikiLinkvctr().getCategoryLink().elementAt(i));
+			field8 = new Field("Category_Links" ,  page.getWikiLinkvctr().getCategoryLink().elementAt(i) ,Field.Store.NO, Field.Index.ANALYZED);
+			indexDoc.add(field8);
+			//field8.setBoost(1.5F);
+		}	*/
 		
 		
 		return indexDoc;

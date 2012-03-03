@@ -28,7 +28,7 @@ public class WikiSearcher{
 
 	public void searchFiles(String queryStr) throws Exception{
 		String indexDir = "Folder_Index";
-    	String[] field = {"contents","title","Exacttitle","Bold","BoldAndItalic","Summary","Italic"};
+    	String[] field = {"contents","title","Exacttitle","Bold","BoldAndItalic","Summary","Italic","Category_Links"};
 
     	IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexDir)));
     	IndexSearcher searcher = new IndexSearcher(reader);

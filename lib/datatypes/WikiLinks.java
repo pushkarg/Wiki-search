@@ -2,10 +2,28 @@ package datatypes;
 import java.util.*;
 
 public class WikiLinks{
-	
+	String titleOfThePage;
 	Vector<String> outPutLink = new Vector<String>();
 	Vector<String> CategoryLink = new Vector<String>();
-	String titleOfThePage;
+	
+	
+	public Vector<String> getOutPutLink() {
+		return outPutLink;
+	}
+
+	public void setOutPutLink(Vector<String> outPutLink) {
+		this.outPutLink = outPutLink;
+	}
+
+	public Vector<String> getCategoryLink() {
+		return CategoryLink;
+	}
+
+	public void setCategoryLink(Vector<String> categoryLink) {
+		CategoryLink = categoryLink;
+	}
+
+	
 	
 	public void setTitleToLink(String titleBuffer)
 	{
