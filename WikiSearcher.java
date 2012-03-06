@@ -1,7 +1,12 @@
 
-import org.apache.lucene.analysis.Analyzer;
-//import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
+import org.apache.lucene.analysis.*;
+//import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.miscellaneous.PatternAnalyzer;
+import org.apache.lucene.analysis.snowball.*;
+import org.apache.lucene.analysis.standard.ClassicAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.TermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryParser.MultiFieldQueryParser;
@@ -12,7 +17,7 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
-//import org.apache.lucene.analysis.en.*;
+import org.apache.lucene.analysis.en.*;
 
 
 import java.io.BufferedReader;
@@ -22,6 +27,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Date;
 
 public class WikiSearcher{
@@ -36,11 +42,28 @@ public class WikiSearcher{
     	
     	//Analyzer analyzer = new SnowballAnalyzer(Version.LUCENE_35,"English");
     	Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
+    	//Analyzer analyzer = new PatternAnalyzer(Version.LUCENE_35);
     	//QueryParser parser = new QueryParser(Version.LUCENE_35, field, analyzer);
+    	
+    		
     	
     	MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_35, field, analyzer);
 		//System.out.println("Query being searched : "+queryStr);
-		Query query = parser.parse(queryStr);
+    	StringBuffer query_text = new StringBuffer(queryStr);
+    	
+    	int posn = query_text.indexOf(" ");
+    	
+    	if(posn>0){
+    		query_text.insert(posn, "^6 ");
+    		int posn2 = query_text.indexOf(" ", posn +4);
+    		if(posn2>0){
+    			query_text.insert(posn2, "^4 ");
+    			int posn3 = query_text.indexOf(" ", posn2 +4);
+        		if(posn3>0)
+        			query_text.insert(posn3, "^2 ");
+    		}
+    	}
+		Query query = parser.parse(query_text.toString());
 		TopDocs hits = searcher.search(query, 30);
 
 		//System.out.println("\nFound "+hits.totalHits +" documents :\n");
@@ -66,3 +89,13 @@ public class WikiSearcher{
 	}
 }
 
+/*
+Charles V, Holy Roman Emperor
+Jean-Marie Le Pen
+Category:Spanish Civil War
+99 Luftballons
+Ferdinand I, Holy Roman Emperor
+Martyrs of the Spanish Civil War
+Maya Plisetskaya
+Spanish Civil War
+*/

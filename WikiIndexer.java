@@ -2,7 +2,10 @@ import parser.*;
 import utilities.*;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.snowball.SnowballAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.tokenattributes.TermAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.NumericField;
@@ -26,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.Date;
 
 
@@ -41,6 +45,29 @@ public class WikiIndexer{
 	final int NUM_OF_PAGES = 10;
 	public Page page;
 
+
+	public String stemmer(Analyzer analyzer, String data){
+		
+		StringReader query_reader = new StringReader(data);
+    	
+    	TokenStream tstream = analyzer.tokenStream("contents", query_reader);
+    	TermAttribute term = tstream.addAttribute(TermAttribute.class);
+
+    	StringBuffer result = new StringBuffer();
+        try {
+            while (tstream.incrementToken()){
+                result.append(term.term());
+                result.append(" ");
+            }
+        } catch (IOException ioe){
+            System.out.println("Error: "+ioe.getMessage());
+        }
+    
+        if (result.length()==0)
+        	result.append(data);	
+        
+        return result.toString();
+	}
 	
 	private void initializeIndexWriter() throws IOException {
 		Directory dir ;
@@ -93,18 +120,23 @@ public class WikiIndexer{
 	}
 
 	public Document addFields(Document indexDoc , Page page){
-		Field field1 = new Field("contents", page.getContent().toString() , Field.Store.NO, Field.Index.ANALYZED);
+		//Analyzer analyzer= new SnowballAnalyzer(Version.LUCENE_35, "English");
+		//Analyzer analyzer= new StandardAnalyzer(Version.LUCENE_35);
+		
+		
+		Field field1 = new Field("contents", /*stemmer(analyzer, */page.getContent().toString() , Field.Store.NO, Field.Index.ANALYZED);
 		indexDoc.add(field1);
 		//field1.setBoost(0.87F);
 
-		Field field2 = new Field("title" ,  page.getTitle().toString() ,Field.Store.NO, Field.Index.ANALYZED);
+		Field field2 = new Field("title" , /*stemmer(analyzer,*/ page.getTitle().toString()  ,Field.Store.NO, Field.Index.ANALYZED);
 		indexDoc.add(field2);
 		field2.setBoost(1.5F); // The title needs to have a higher weight than other fields.
 
-		Field field3 = new Field("Exacttitle" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.NOT_ANALYZED);
+		Field field3 = new Field("Exacttitle" , page.getTitle().toString() ,Field.Store.YES, Field.Index.NOT_ANALYZED);
 		indexDoc.add(field3);
 		//field3.setBoost(6F);
 		
+		//System.out.println(stemmer(analyzer, page.getTitle().toString())+"Gautham\n");
 		//Field field4 = new Field("Summary" ,  page.getSummary_text().toString() ,Field.Store.YES, Field.Index.ANALYZED);
 		//field4.setBoost(1.3F);
 		//indexDoc.add(field4);
@@ -185,7 +217,7 @@ public class WikiIndexer{
 			//field8.setBoost(1.5F);
 		}	*/
 		
-		//System.out.println("\n\nTitle : "+page.getTitle().toString() + "\nContent Length : "+page.getContent().toString().length() + "\nNum of Ref urls : " + page.getNumRefUrls() + "\nOutlink count : "+out_link_count );
+		//System.out.println("\n\nTitle : "+page.getTitle().toString() + "\nContent Length : "+page.getContent().toString().length() + "\nNum of Ref urls : " + page.getNumRefUrls() + "\nOutlink count : "+out_link_count );		
 
 		// CATEGORY DEPRECIATION
 		//System.out.println(page.getNumRefUrls()+"Gautham");
@@ -203,9 +235,6 @@ public class WikiIndexer{
 			indexDoc.setBoost(0.82F);
 		else if(page.getTitle().toString().contains("Template:") )
 			indexDoc.setBoost(0.01F);
-			
-
-		
 		return indexDoc;
 	}
  
