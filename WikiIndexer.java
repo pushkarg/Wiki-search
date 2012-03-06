@@ -138,13 +138,13 @@ public class WikiIndexer{
 		
 		
 		if(page.getNumRefUrls()>200)
-			indexDoc.setBoost(2F);
-		else if(page.getNumRefUrls()>150)
 			indexDoc.setBoost(1.8F);
-		else if(page.getNumRefUrls()>125)
+		else if(page.getNumRefUrls()>150)
 			indexDoc.setBoost(1.6F);
+		else if(page.getNumRefUrls()>125)
+			indexDoc.setBoost(1.5F);
 		else if(page.getNumRefUrls()>100)
-			indexDoc.setBoost(1.4F);
+			indexDoc.setBoost(1.3F);
 		else if(page.getNumRefUrls()>75)
 			indexDoc.setBoost(1.2F);
 		else if(page.getNumRefUrls()>50)
@@ -155,12 +155,6 @@ public class WikiIndexer{
 		else if (page.getNumRefUrls()>5)
 			indexDoc.setBoost(1.1F);
 			*/
-
-		// CATEGORY DEPRECIATION
-		
-		//System.out.println(page.getNumRefUrls()+"Gautham");
-		if( page.getTitle().toString().contains("Category:") || page.getTitle().toString().contains("User:") || page.getTitle().toString().contains("File:"))
-			indexDoc.setBoost(0.82F);
 
 		// OUT LINK ANALYSIS
 		
@@ -192,6 +186,25 @@ public class WikiIndexer{
 		}	*/
 		
 		//System.out.println("\n\nTitle : "+page.getTitle().toString() + "\nContent Length : "+page.getContent().toString().length() + "\nNum of Ref urls : " + page.getNumRefUrls() + "\nOutlink count : "+out_link_count );
+
+		// CATEGORY DEPRECIATION
+		//System.out.println(page.getNumRefUrls()+"Gautham");
+		if( page.getTitle().toString().contains("Talk:"))
+			indexDoc.setBoost(0.01F);
+		else if( page.getTitle().toString().contains("Category:") )
+			indexDoc.setBoost(0.78F);
+		else if( page.getTitle().toString().contains("User:") )
+			indexDoc.setBoost(0.82F);
+		else if(page.getTitle().toString().contains("File:") && page.getTitle().toString().contains(".svg")  )
+			indexDoc.setBoost(1.42F);
+		else if(page.getTitle().toString().contains("File:") )
+			indexDoc.setBoost(0.82F);
+		else if(page.getTitle().toString().contains("Wikipedia:") )
+			indexDoc.setBoost(0.82F);
+		else if(page.getTitle().toString().contains("Template:") )
+			indexDoc.setBoost(0.01F);
+			
+
 		
 		return indexDoc;
 	}
