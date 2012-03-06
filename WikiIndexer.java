@@ -103,11 +103,12 @@ public class WikiIndexer{
 
 		Field field3 = new Field("Exacttitle" ,  page.getTitle().toString() ,Field.Store.YES, Field.Index.NOT_ANALYZED);
 		indexDoc.add(field3);
-		field3.setBoost(6F);
+		//field3.setBoost(6F);
 		
-		//Field field4 = new Field("Summary" ,  page.getSummary_text().toString() ,Field.Store.NO, Field.Index.ANALYZED);
+		//Field field4 = new Field("Summary" ,  page.getSummary_text().toString() ,Field.Store.YES, Field.Index.ANALYZED);
+		//field4.setBoost(1.3F);
 		//indexDoc.add(field4);
-		//field4.setBoost(1.5F);
+		//System.out.println("\nTitle : " + page.getTitle().toString() + "\nSummary : " + page.getSummary_text().toString() );
 		
 	/*	
 		Field field5;
@@ -135,18 +136,25 @@ public class WikiIndexer{
 
 		// CITATIONS ANALYSIS
 		
-		if(page.getNumRefUrls()>125)
-			indexDoc.setBoost(2.2F);
-		else if(page.getNumRefUrls()>100)
+		
+		if(page.getNumRefUrls()>200)
 			indexDoc.setBoost(2F);
-		else if(page.getNumRefUrls()>75)
+		else if(page.getNumRefUrls()>150)
 			indexDoc.setBoost(1.8F);
-		else if(page.getNumRefUrls()>50)
-			indexDoc.setBoost(1.7F);
-		else if (page.getNumRefUrls()>25)
-			indexDoc.setBoost(1.5F);
-		else if (page.getNumRefUrls()>5)
+		else if(page.getNumRefUrls()>125)
+			indexDoc.setBoost(1.6F);
+		else if(page.getNumRefUrls()>100)
+			indexDoc.setBoost(1.4F);
+		else if(page.getNumRefUrls()>75)
 			indexDoc.setBoost(1.2F);
+		else if(page.getNumRefUrls()>50)
+			indexDoc.setBoost(1.1F);
+			/*
+		else if (page.getNumRefUrls()>25)
+			indexDoc.setBoost(1.3F);
+		else if (page.getNumRefUrls()>5)
+			indexDoc.setBoost(1.1F);
+			*/
 
 		// CATEGORY DEPRECIATION
 		
@@ -158,14 +166,14 @@ public class WikiIndexer{
 		
 		int out_link_count = page.getWikiLinkvctr().getOutPutLink().size();
 
-	/*	if(out_link_count>180)
-			indexDoc.setBoost(3.2F);
-		else */if(out_link_count>150)
-			indexDoc.setBoost(3.25F);
+		if(out_link_count>180)
+			indexDoc.setBoost(1.6F);
+		else if(out_link_count>150)
+			indexDoc.setBoost(1.3F);
 		else if(out_link_count>100)
-			indexDoc.setBoost(2.5F);
+			indexDoc.setBoost(1.2F);
 		else if(out_link_count>70)
-			indexDoc.setBoost(2F);
+			indexDoc.setBoost(1.1F);
 		/*else if(out_link_count>50)
 			indexDoc.setBoost(1.2F);
 		else if(out_link_count>30)
@@ -183,6 +191,7 @@ public class WikiIndexer{
 			//field8.setBoost(1.5F);
 		}	*/
 		
+		//System.out.println("\n\nTitle : "+page.getTitle().toString() + "\nContent Length : "+page.getContent().toString().length() + "\nNum of Ref urls : " + page.getNumRefUrls() + "\nOutlink count : "+out_link_count );
 		
 		return indexDoc;
 	}
