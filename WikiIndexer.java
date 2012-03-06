@@ -16,7 +16,7 @@ import org.apache.lucene.search.Similarity;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.Version;
-import org.apache.lucene.analysis.snowball.*;
+//import org.apache.lucene.analysis.snowball.*;
 
 
 import java.io.BufferedReader;
