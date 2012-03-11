@@ -39,6 +39,7 @@ function setUpPersistantConnection(e){
 				var textSent = new String(xmlhttp.responseText);
 				document.getElementById("loadingIcon").innerHTML="<span></span>";
 				document.getElementById("results").innerHTML= textSent;
+				document.getElementById("results").style.visibility="visible";
 				document.getElementById("footer").style.display= "block";
 			}
 		}catch(e){
@@ -49,14 +50,17 @@ function setUpPersistantConnection(e){
 	var pageNum = document.getElementById("pageNum").innerHTML;
 	xmlhttp.open("POST","http://192.168.0.9:5000?q=" +query+ "&pageNum="+pageNum+"&param=EOS",true);
 	xmlhttp.send("STUFF POSTED");
-	document.getElementById("results").innerHTML="";
+	document.getElementById("results").style.visibility="hidden";
 	document.getElementById("loadingIcon").innerHTML="<img src='http://l.yimg.com/t/yil/yil20120208/images/ajax-loader-bar.gif' />";
 };
 
 
 function setEventHandlers(){
 	var connectButton=document.getElementById("connectToServer");
-	connectButton.onclick=function(e){setUpPersistantConnection(e);}
+	connectButton.onclick=function(e){
+		document.getElementById("pageNum").innerHTML = 0;
+		setUpPersistantConnection(e);
+	}
 
 	var pageNum = document.getElementById("pageNum").innerHTML;
 

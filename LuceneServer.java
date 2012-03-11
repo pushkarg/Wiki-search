@@ -115,7 +115,7 @@ public class LuceneServer {
 					int pageNum = Integer.parseInt(pageNumArr[1]);
 					PrintWriter outputChannel = new PrintWriter( output_stream ,true);
 					System.out.println("\n\n comin here .. query  : " + query);
-					String results[] = searchFiles(query, 0);
+					String results[] = searchFiles(query, pageNum);
 
 					//for(int list=0;list<10;list++)
  					outputChannel.println( createHtml(results) );
@@ -142,6 +142,9 @@ public class LuceneServer {
 		return liTag;
 	}
 	public String createHtml(String results[] ){
+		if(results.length == 0){
+			return "<span id=\"noResultsToDisplay\">No results</span> ";
+		}
 		String final_html = "<ul id=\"resultsUl\"> ";
 		for(int i=0;i<results.length  && i< 10;i++){
 			final_html+=createLiTag(results[i] );
@@ -190,7 +193,8 @@ public class LuceneServer {
     	Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
     	
     	MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_35, field, analyzer);
-    	StringBuffer query_text = new StringBuffer(queryStr);
+		queryStr = queryStr.replace("%22" , "'");
+    	StringBuffer query_text = new StringBuffer(queryStr.replace( "%20" , " ") );
     	
     	int posn = query_text.indexOf(" ");
     	
@@ -205,20 +209,29 @@ public class LuceneServer {
     		}
     	}
 		Query query = parser.parse(query_text.toString());
-		TopDocs hits = searcher.search(query, 30);
+		TopDocs hits = searcher.search(query, 200);
 
 		ScoreDoc results[] = hits.scoreDocs;
+	  	int numTotalHits = hits.totalHits;
 		
-		String resultArr[] = new String[100];
-		for(int i =0;i<results.length && i<10 ; i++){
-			Document doc = searcher.doc(results[i].doc);
-			descriptionsArray[i]="";
-			resultArr[i] = doc.get("Exacttitle");
-			//String description = doc.get
+		String resultArr[] = new String[10];
 
-			//System.out.println("resultArr : " + resultArr[i] );
+		int startIndex = pageNum*10;
+		int count_of_res=0;
+		for(int i =startIndex;i<numTotalHits && i< startIndex + 10 ; i++){
+			Document doc = searcher.doc(results[i].doc);
+			//descriptionsArray[i]="";
+			resultArr[i - startIndex] = doc.get("Exacttitle");
+			//String description = doc.get
+			count_of_res++;
 		}
-		return resultArr;
+
+		//for(int i=0;i<10;i++)
+			//System.out.println("resultArr : " + resultArr[i] );
+		String tempResultArr[] = new String[count_of_res ];
+		for(int i=0;i<count_of_res;i++)
+			tempResultArr[i] = resultArr[i];
+		return tempResultArr;
 	}
 
 	public static void main(String args[]){
