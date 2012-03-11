@@ -1,0 +1,57 @@
+<html>
+<head><title> Collaborative Document Editing</title>
+	<style type="text/css">
+		#resultsUl {margin-left:150px;}
+		.resultLi {list-style-type:none;padding-bottom:10px;}
+	</style>
+</head>
+<body>
+	<div id="container" style="margin-left:200px;">
+		<h1 style="margin-left:320px;">Wiki Search</h1>
+		<div style="margin-left:100px;border-top:1px solid;padding-top:20px;width:700px;">
+			<div>
+				<input type="text" id="textBox" style="width:300px;margin-left:100px;"></input>
+				<button id="connectToServer"  style="margin-left:50px;" value="Search" >Search</button>
+			</div>
+			<div id="loadingIcon" style="margin-top:50px;margin-left:135px;"></div>
+			<div id="results" >
+			</div>
+		</div>
+	</div>
+	<script type="text/javascript">
+
+var textBox = document.getElementById("textBox");
+
+function setUpPersistantConnection(e){
+	xmlhttp=new XMLHttpRequest();
+	xmlhttp.onreadystatechange=function(){
+		try{
+			if( xmlhttp.status==200){
+				var textSent = new String(xmlhttp.responseText);
+				document.getElementById("loadingIcon").innerHTML="<span></span>";
+				document.getElementById("results").innerHTML= textSent;
+			}
+		}catch(e){
+			console.log(e.message + " Xml status : ");
+		}
+	};
+	var query=textBox.value;
+	xmlhttp.open("POST","http://192.168.0.9:5000?q=" +query+ "&param=EOS",true);
+	xmlhttp.send("STUFF POSTED");
+	document.getElementById("results").innerHTML="";
+	document.getElementById("loadingIcon").innerHTML="<img src='http://l.yimg.com/t/yil/yil20120208/images/ajax-loader-bar.gif' />";
+};
+
+function setEventHandlers(){
+	var connectButton=document.getElementById("connectToServer");
+	connectButton.onclick=function(e){setUpPersistantConnection(e);}
+};
+
+function main(){
+	setEventHandlers();	
+}
+main();
+</script>
+
+</body>
+</html>
