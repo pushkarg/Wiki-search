@@ -107,8 +107,12 @@ public class LuceneServer {
 					System.out.println("Comin here : "+ client_string );
 				}else{
 					String query_params = client_string.substring(position_of_question+1,client_string.indexOf("&param=EOS"));
-					String  params[] = query_params.split("=") ;
-					String query = params[1];
+					String  params[] = query_params.split("&") ;
+					String queryArr[] = params[0].split("=");
+					String pageNumArr[] = params[1].split("=");
+
+					String query = queryArr[1];
+					int pageNum = Integer.parseInt(pageNumArr[1]);
 					PrintWriter outputChannel = new PrintWriter( output_stream ,true);
 					System.out.println("\n\n comin here .. query  : " + query);
 					String results[] = searchFiles(query, 0);
@@ -143,6 +147,8 @@ public class LuceneServer {
 			final_html+=createLiTag(results[i] );
 		}
 		final_html+="</ul>";
+
+
 		return final_html;
 	}
 
@@ -208,7 +214,7 @@ public class LuceneServer {
 			Document doc = searcher.doc(results[i].doc);
 			descriptionsArray[i]="";
 			resultArr[i] = doc.get("Exacttitle");
-			String description = doc.get
+			//String description = doc.get
 
 			//System.out.println("resultArr : " + resultArr[i] );
 		}
