@@ -7,6 +7,7 @@
 		#leftLink {float:left;}
 		#rightLink {float:right;}
 		#footer {margin-top:10px;border:1px solid;height:20px;padding:10px 20px;display:none;}
+		.yui3-aclist-list {background-color:#F1F1F1;}
 	</style>
 </head>
 <body>
@@ -14,7 +15,7 @@
 		<h1 style="margin-left:320px;">Wiki Search</h1>
 		<div style="margin-left:100px;border-top:1px solid;padding-top:20px;width:700px;">
 			<div>
-				<input type="text" id="textBox" style="width:300px;margin-left:100px;"></input>
+				<input type="text" id="ac-input" style="width:300px;margin-left:100px;"></input>
 				<button id="connectToServer"  style="margin-left:50px;" value="Search" >Search</button>
 			</div>
 			<div id="loadingIcon" style="margin-top:50px;margin-left:135px;"></div>
@@ -27,9 +28,10 @@
 		</div>
 		<div id="pageNum" style="display:none;">0</div>
 	</div>
+	<script src="http://yui.yahooapis.com/3.4.1/build/yui/yui-min.js"></script>
 	<script type="text/javascript">
 
-var textBox = document.getElementById("textBox");
+var textBox = document.getElementById("ac-input");
 
 function setUpPersistantConnection(e){
 	xmlhttp=new XMLHttpRequest();
@@ -87,6 +89,49 @@ function main(){
 	setEventHandlers();	
 }
 main();
+</script>
+
+<script>
+YUI().use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', function (Y) {
+  var states = [
+	'99 balloons',
+	'Apple',
+	'Computer Programming',
+	'DNA',
+	'Do geese see god',
+	'Epigenetics',
+	'Eye of Horus',
+	'Financial meltdown',
+	'Hollywood',
+	'Justin Timberlake',
+	'Least Squares',
+	'Madam I’m Adam',
+	'Mars robots',
+	'Maya',
+	'Mean Average Precision',
+	'Microsoft',
+	'Much ado about nothing',
+	'Page six',
+	'Physics Nobel Prizes',
+	'Precision',
+	'Read the manual',
+	'Roman Empire',
+	'Solar energy',
+	'Spanish Civil War',
+	'Statistical Significance',
+	'Steve Jobs',
+	'The Maya',
+	'Triple Cross',
+	'Tuscany',
+	'US Constitution'
+  ];
+
+  Y.one('#ac-input').plug(Y.Plugin.AutoComplete, {
+    resultFilters    : 'phraseMatch',
+    resultHighlighter: 'phraseMatch',
+    source           : states
+  });
+});
 </script>
 
 </body>
