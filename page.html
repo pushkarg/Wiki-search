@@ -2,11 +2,12 @@
 <head><title>Wiki Search</title>
 	<style type="text/css">
 		a {text-decoration:none;}
-		#resultsUl {margin-left:180px;}
-		.resultLi {list-style-type:none;padding-bottom:10px;}
+		/*#resultsUl {margin-left:180px;} */
+		.summary_text {display:block;padding-top:5px;}
+		.resultLi {list-style-type:none;padding-bottom:15px;}
 		#leftLink {float:left;}
 		#rightLink {float:right;}
-		#footer {margin-top:10px;border:1px solid;height:20px;padding:10px 20px;display:none;}
+		#footer {margin-top:10px;border:1px solid;height:20px;padding:10px 20px;display:none;margin-bottom:100px;}
 		.yui3-aclist-list {background-color:#F1F1F1;}
 		#pageNumDisp {margin-left:200px;}
 	</style>
@@ -46,12 +47,22 @@ function setUpPersistantConnection(e){
 				//document.getElementById("loadingIcon").display.visibility="none";
 				//alert("text len : "+textSent.length);
 				flag=0;
-				if(textSent.length<=5){
+				if(textSent.length<=35){
+
+					var pageNum = document.getElementById("pageNum").innerHTML;
+					if( parseInt(pageNum) == 0 ){
+						alert("No Results");
+					}
+					else{
+						alert("This is the last page");
+						document.getElementById("results").style.visibility="visible";
+						flag=1;
+						var pageNum = document.getElementById("pageNum").innerHTML;
+						pageNum = parseInt(pageNum)-1;
+						document.getElementById("pageNum").innerHTML = pageNum;
+					}
 					document.getElementById("rightLink").style.visibility="hidden";
 					document.getElementById("loadingIcon").style.visibility="hidden";
-					alert("This is the last page");
-					document.getElementById("results").style.visibility="visible";
-					flag=1;
 				}
 					
 				if(flag==0){
@@ -81,6 +92,7 @@ function setUpPersistantConnection(e){
 function setEventHandlers(){
 	var connectButton=document.getElementById("connectToServer");
 	connectButton.onclick=function(e){
+		document.getElementById("rightLink").style.visibility="visible";
 		document.getElementById("pageNum").innerHTML = 0;
 		setUpPersistantConnection(e);
 		document.getElementById("pageNumDisp").innerHTML = "Page 1";
@@ -99,6 +111,8 @@ function setEventHandlers(){
 		document.getElementById("pageNum").innerHTML = pageNum;
 		document.getElementById("pageNumDisp").innerHTML = "Page "+ ( parseInt(pageNum) +1);
 		document.getElementById("rightLink").style.visibility="visible";
+		console.log("COming to setup connection ! ");
+		flag=0;
 		setUpPersistantConnection(e);
 	}
 	var nextLink = document.getElementById("rightLink");

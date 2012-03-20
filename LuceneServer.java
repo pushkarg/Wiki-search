@@ -143,14 +143,25 @@ public class LuceneServer {
 		String liTag = "<li class=\"resultLi\" target=\"_blank\">" +createLink(result) +"</li>";
 		return liTag;
 	}
+
+	public String createLiTag(String result , String span_html){
+		String liTag = "<li class=\"resultLi\" target=\"_blank\">" +createLink(result) + span_html +"</li>";
+		return liTag;
+	}
+
 	public String createHtml(String results[] ){
 		if(results.length == 0){
-			return "";
+			return "<span></span>";
 			//return "<span id=\"noResultsToDisplay\">No results</span> ";
 		}
 		String final_html = "<ul id=\"resultsUl\"> ";
 		for(int i=0;i<results.length  && i< 10;i++){
-			final_html+=createLiTag(results[i] );
+			//System.out.println("res : "+results[i] + " , desc : "+ descriptionsArray[i] );
+			if(descriptionsArray[i].length()>0)
+				descriptionsArray[i]+="...";
+			String span_html = "<span class=\"summary_text\">"+descriptionsArray[i]+ "</span>";
+			final_html+=createLiTag(results[i], span_html );
+			//final_html+=span_html;
 		}
 		final_html+="</ul>";
 
@@ -182,13 +193,13 @@ public class LuceneServer {
 	}
 
 	public LuceneServer(){
-		descriptionsArray = new String[100];
+		descriptionsArray = new String[20];
 	}
 	
 	public String[] searchFiles(String queryStr, int pageNum) throws Exception{
 		System.out.println("query ; " + queryStr);
 		String indexDir = "Folder_Index";
-    	String[] field = {"contents","title","Exacttitle","Bold","Summary","Category_Links"};
+    	String[] field = {"contents","title","Exacttitle","Bold","Category_Links"};
 
     	IndexReader reader = IndexReader.open(FSDirectory.open(new File(indexDir)));
     	IndexSearcher searcher = new IndexSearcher(reader);
@@ -196,8 +207,9 @@ public class LuceneServer {
     	Analyzer analyzer = new StandardAnalyzer(Version.LUCENE_35);
     	
     	MultiFieldQueryParser parser = new MultiFieldQueryParser(Version.LUCENE_35, field, analyzer);
-		//queryStr = queryStr.replace("%22" , "\"");
+		queryStr = queryStr.replace("%22" , "\"");
     	StringBuffer query_text = new StringBuffer(queryStr.replace( "%20" , " ") );
+		System.out.println("Searching for : " + query_text );
     	
     	int posn = query_text.indexOf(" ");
     	
@@ -223,9 +235,13 @@ public class LuceneServer {
 		int count_of_res=0;
 		for(int i =startIndex;i<numTotalHits && i< startIndex + 10 ; i++){
 			Document doc = searcher.doc(results[i].doc);
-			//descriptionsArray[i]="";
 			resultArr[i - startIndex] = doc.get("Exacttitle");
 			//String description = doc.get
+			//System.out.println("SUmmary : " + doc.get("Summary") );
+			descriptionsArray[i-startIndex]="";
+			descriptionsArray[i-startIndex]= doc.get("Summary") ;
+			if( descriptionsArray[i-startIndex].indexOf('{') >=0 )
+				 descriptionsArray[i-startIndex]="";
 			count_of_res++;
 		}
 

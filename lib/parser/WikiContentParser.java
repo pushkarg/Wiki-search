@@ -226,6 +226,30 @@ public class  WikiContentParser{
 			this.removeExtraStuff(content);	
 			//System.out.println("AFTER removing the infobox : \n" + content +"\n\n\n\n\n");
 		}
+		
+		//Remove [[]] links
+		Pattern p_link = Pattern.compile("\\[\\[(.*?)\\]\\]");
+		Matcher matcher_link = p_link.matcher(content);
+
+		String matched_phrase = "";
+		while(matcher_link.find()){
+			matched_phrase = matcher_link.group();
+			if(matched_phrase.indexOf("|")>=0){
+				int pipe_loc = content.indexOf(matched_phrase) + matched_phrase.lastIndexOf('|');
+				String temporary_buffer=content.substring(0, content.indexOf(matched_phrase) ) + content.substring(pipe_loc+1, content.length() ) ;
+				content = new StringBuffer(temporary_buffer );
+			}
+		}
+		String temp_str = content.toString().replace("[[", "");
+		temp_str = temp_str.replace("]]", "");
+		content=new StringBuffer(temp_str);
+		
+		if(content.indexOf("<!--")>0 ){
+			int start_of_comment = content.indexOf("<!--") ;
+			int end_of_comment = content.indexOf("-->") ;
+			content.replace(start_of_comment , end_of_comment + 3, "" );
+		}
+
 		return content;
 	}
 
