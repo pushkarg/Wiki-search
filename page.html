@@ -8,6 +8,7 @@
 		#rightLink {float:right;}
 		#footer {margin-top:10px;border:1px solid;height:20px;padding:10px 20px;display:none;}
 		.yui3-aclist-list {background-color:#F1F1F1;}
+		#pageNumDisp {margin-left:200px;}
 	</style>
 </head>
 <body>
@@ -18,11 +19,12 @@
 				<input type="text" id="ac-input" style="width:300px;margin-left:100px;"></input>
 				<button id="connectToServer"  style="margin-left:50px;" value="Search" >Search</button>
 			</div>
-			<div id="loadingIcon" style="margin-top:50px;margin-left:135px;"></div>
+			<div id="loadingIcon" style="margin-top:35px;margin-left:190px;"></div>
 			<div id="results" >
 			</div>
 			<div id="footer">
 				<a href="#" id="leftLink">Previous</a>
+					<span id="pageNumDisp"></span>
 				<a href="#" id="rightLink">Next</a>
 			</div>
 		</div>
@@ -33,27 +35,46 @@
 
 var textBox = document.getElementById("ac-input");
 
+var flag=0;
 function setUpPersistantConnection(e){
+
 	xmlhttp=new XMLHttpRequest();
 	xmlhttp.onreadystatechange=function(){
 		try{
-			if( xmlhttp.status==200){
+			if( xmlhttp.status==200 && xmlhttp.readyState==4){
 				var textSent = new String(xmlhttp.responseText);
-				document.getElementById("loadingIcon").innerHTML="<span></span>";
-				document.getElementById("results").innerHTML= textSent;
-				document.getElementById("results").style.visibility="visible";
-				document.getElementById("footer").style.display= "block";
+				//document.getElementById("loadingIcon").display.visibility="none";
+				//alert("text len : "+textSent.length);
+				flag=0;
+				if(textSent.length<=5){
+					document.getElementById("rightLink").style.visibility="hidden";
+					document.getElementById("loadingIcon").style.visibility="hidden";
+					alert("This is the last page");
+					document.getElementById("results").style.visibility="visible";
+					flag=1;
+				}
+					
+				if(flag==0){
+					document.getElementById("results").innerHTML= textSent;
+					document.getElementById("results").style.visibility="visible";
+					document.getElementById("footer").style.display= "block";
+					//document.getElementById("loadingIcon").innerHTML="<span></span>";
+					document.getElementById("loadingIcon").style.visibility="hidden";
+				}
 			}
 		}catch(e){
 			console.log(e.message + " Xml status : ");
 		}
 	};
-	var query=textBox.value;
-	var pageNum = document.getElementById("pageNum").innerHTML;
-	xmlhttp.open("POST","http://192.168.0.9:5000?q=" +query+ "&pageNum="+pageNum+"&param=EOS",true);
-	xmlhttp.send("STUFF POSTED");
-	document.getElementById("results").style.visibility="hidden";
-	document.getElementById("loadingIcon").innerHTML="<img src='http://l.yimg.com/t/yil/yil20120208/images/ajax-loader-bar.gif' />";
+	if(flag==0){
+		var query=textBox.value;
+		var pageNum = document.getElementById("pageNum").innerHTML;
+		xmlhttp.open("POST","http://localhost:5000?q=" +query+ "&pageNum="+pageNum+"&param=EOS",true);
+		xmlhttp.send("STUFF POSTED");
+		document.getElementById("results").style.visibility="hidden";
+		document.getElementById("loadingIcon").innerHTML="<img src='http://l.yimg.com/t/yil/yil20120208/images/ajax-loader-bar.gif' />";
+		document.getElementById("loadingIcon").style.visibility="visible";
+	}
 };
 
 
@@ -62,25 +83,31 @@ function setEventHandlers(){
 	connectButton.onclick=function(e){
 		document.getElementById("pageNum").innerHTML = 0;
 		setUpPersistantConnection(e);
+		document.getElementById("pageNumDisp").innerHTML = "Page 1";
 	}
 
-	var pageNum = document.getElementById("pageNum").innerHTML;
 
 	var previousLink = document.getElementById("leftLink");
 	previousLink.onclick=function(e){
+		var pageNum = document.getElementById("pageNum").innerHTML;
 		if(pageNum == 0)
 		{
-			alert("First page");
+			alert("This is first page");
 			return;
 		}
 		pageNum = parseInt(pageNum)-1;
 		document.getElementById("pageNum").innerHTML = pageNum;
+		document.getElementById("pageNumDisp").innerHTML = "Page "+ ( parseInt(pageNum) +1);
+		document.getElementById("rightLink").style.visibility="visible";
 		setUpPersistantConnection(e);
 	}
 	var nextLink = document.getElementById("rightLink");
 	nextLink.onclick=function(e){
+		var pageNum = document.getElementById("pageNum").innerHTML;
 		pageNum = parseInt(pageNum)+1;
 		document.getElementById("pageNum").innerHTML = pageNum;
+		//document.getElementById("pageNumDisp").innerHTML = pageNum;
+		document.getElementById("pageNumDisp").innerHTML = "Page "+ ( parseInt(pageNum) +1);
 		setUpPersistantConnection(e);
 	}
 };
@@ -105,7 +132,7 @@ YUI().use('autocomplete', 'autocomplete-filters', 'autocomplete-highlighters', f
 	'Hollywood',
 	'Justin Timberlake',
 	'Least Squares',
-	'Madam I’m Adam',
+	'Madam Im Adam',
 	'Mars robots',
 	'Maya',
 	'Mean Average Precision',
