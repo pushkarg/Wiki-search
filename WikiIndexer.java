@@ -148,6 +148,14 @@ public class WikiIndexer{
 		indexDoc.add(field3);
 		field3.setBoost(6F);
 
+
+		int summary_len = page.getSummary_text().toString().length();
+		if(summary_len>150)
+			summary_len = 150;
+		Field field_summary = new Field("Summary", page.getSummary_text().toString().substring(0, summary_len),
+				Field.Store.YES, Field.Index.NOT_ANALYZED);
+		indexDoc.add(field_summary);
+
 		/*
 		 * Field field5; for(int i=0;i<page.getBold_text().size();i++){ field5 =
 		 * new Field("Bold" , page.getBold_text().elementAt(i).getPhrase()
@@ -182,6 +190,7 @@ public class WikiIndexer{
 		// 0.23> <=0.25
 		// 0.25> <=0.27
 		// 0.27> <=0.29
+		/*
 		try {
 
 			getPageRankPerTitle(pageTitle);
@@ -222,6 +231,7 @@ public class WikiIndexer{
 		} catch (Exception e) {
 			System.out.println(e.toString());
 		}
+		*/
 
 		// CITATIONS ANALYSIS
 		if (page.getNumRefUrls() > 200)
